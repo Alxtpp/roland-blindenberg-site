@@ -6,3 +6,9 @@
 
 # Réglages locaux Claude Code
 .claude/settings.local.json
+
+# Dépendances (Netlify les réinstalle au déploiement)
+node_modules/
+
+# Dossier de travail Netlify
+.netlify/

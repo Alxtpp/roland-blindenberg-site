@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Administration — Roland Blindenberg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --ink: #111;
+  --muted: #777;
+  --line: #ddd;
+  --bg: #fff;
+  --soft: #f5f5f5;
+  --green: #2e9e5b;
+  --red: #c0392b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 300; margin: 0; }
+button { font-family: var(--font-body); cursor: pointer; }
+input, textarea, select { font-family: var(--font-body); font-weight: 300; }
+
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 20px 80px; }
+
+/* ── Connexion ── */
+.login { max-width: 380px; margin: 18vh auto; padding: 0 20px; text-align: center; }
+.login h1 { font-size: 26px; letter-spacing: .02em; }
+.login p { color: var(--muted); font-size: 14px; margin: 10px 0 28px; }
+.login input {
+  width: 100%; padding: 13px 14px; font-size: 16px;
+  border: 1px solid var(--line); background: #fff; color: var(--ink);
+}
+.login input:focus { outline: none; border-color: var(--ink); }
+.login button {
+  width: 100%; margin-top: 12px; padding: 13px;
+  background: var(--ink); color: #fff; border: none; font-size: 15px;
+}
+.login button:disabled { opacity: .5; cursor: default; }
+
+/* ── En-tête ── */
+.topbar {
+  position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.96);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.topbar-in {
+  max-width: 940px; margin: 0 auto; padding: 14px 20px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.topbar h1 { font-size: 17px; letter-spacing: .03em; margin-right: auto; }
+.topbar h1 small { display: block; font-family: var(--font-body); font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+
+.btn { padding: 9px 15px; font-size: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink); }
+.btn:hover { border-color: var(--ink); }
+.btn-primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn-primary:disabled { opacity: .35; cursor: default; }
+.btn-quiet { border-color: transparent; color: var(--muted); }
+.btn-quiet:hover { color: var(--ink); border-color: transparent; text-decoration: underline; }
+.btn-danger { color: var(--red); }
+.btn-danger:hover { border-color: var(--red); }
+.btn-sm { padding: 6px 10px; font-size: 13px; }
+
+.dirty-dot { width: 7px; height: 7px; border-radius: 50%; background: #e0a800; display: inline-block; margin-right: 7px; }
+
+/* ── Séries ── */
+.tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--line); margin: 28px 0 0; overflow-x: auto; }
+.tab {
+  border: none; background: none; padding: 12px 0 13px; font-size: 15px;
+  color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap;
+}
+.tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+.tab span { font-size: 12px; color: var(--muted); margin-left: 6px; }
+
+/* ── Liste des œuvres ── */
+.work {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 0; border-bottom: 1px solid var(--line);
+}
+.work-thumb {
+  width: 92px; height: 92px; flex: 0 0 92px; object-fit: cover;
+  background: var(--soft); border: 1px solid var(--line);
+}
+.work-main { flex: 1; min-width: 0; }
+.work-title { font-size: 16px; margin-bottom: 3px; word-break: break-word; }
+.work-dims { font-size: 13px; color: var(--muted); }
+.work-desc {
+  font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.work-flags { display: flex; align-items: center; gap: 12px; margin-top: 9px; flex-wrap: wrap; }
+.avail { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; border: none; background: none; padding: 0; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot.green { background: var(--green); }
+.dot.gray { background: #bbb; }
+.langs { font-size: 11px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+.work-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.work-actions .row { display: flex; gap: 6px; }
+
+.empty { padding: 60px 0; text-align: center; color: var(--muted); font-size: 15px; }
+.addbar { padding: 26px 0 0; }
+
+/* ── Formulaire ── */
+.sheet {
+  position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 50;
+  display: flex; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 30px 16px;
+}
+.sheet[hidden] { display: none; }
+.sheet-in { background: #fff; width: 100%; max-width: 620px; padding: 28px; }
+.sheet-in h2 { font-size: 21px; margin-bottom: 22px; }
+
+.field { margin-bottom: 17px; }
+.field label { display: block; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.field input[type=text], .field textarea, .field select {
+  width: 100%; padding: 11px 12px; font-size: 15px; border: 1px solid var(--line); background: #fff; color: var(--ink);
+}
+.field textarea { min-height: 84px; resize: vertical; line-height: 1.5; }
+.field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--ink); }
+.hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+.drop {
+  border: 1px dashed var(--line); padding: 22px; text-align: center; color: var(--muted);
+  font-size: 14px; cursor: pointer;
+}
+.drop:hover, .drop.over { border-color: var(--ink); color: var(--ink); }
+.preview { max-width: 100%; max-height: 240px; display: block; margin: 0 auto 12px; }
+
+details.trans { border-top: 1px solid var(--line); padding-top: 15px; margin-top: 6px; }
+details.trans summary { cursor: pointer; font-size: 13px; color: var(--muted); list-style: none; }
+details.trans summary::-webkit-details-marker { display: none; }
+details.trans summary::before { content: '+ '; }
+details.trans[open] summary::before { content: '– '; }
+details.trans .inner { padding-top: 16px; }
+
+.sheet-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+/* ── Messages ── */
+.toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
+  background: var(--ink); color: #fff; padding: 12px 20px; font-size: 14px; z-index: 100;
+  max-width: 90vw; text-align: center;
+}
+.toast[hidden] { display: none; }
+.toast.err { background: var(--red); }
+.err-inline { color: var(--red); font-size: 13px; margin-top: 10px; min-height: 18px; }
+
+@media (max-width: 620px) {
+  .work { gap: 12px; }
+  .work-thumb { width: 66px; height: 66px; flex-basis: 66px; }
+  .topbar h1 { width: 100%; margin-bottom: 4px; }
+  .sheet-in { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Connexion ── -->
+<div class="login" id="login">
+  <h1>Administration</h1>
+  <p>Gestion des œuvres du site.</p>
+  <form id="loginForm">
+    <input type="password" id="pw" placeholder="Mot de passe" autocomplete="current-password" required>
+    <button class="btn-primary" type="submit" id="loginBtn">Entrer</button>
+  </form>
+  <div class="err-inline" id="loginErr"></div>
+</div>
+
+<!-- ── Application ── -->
+<div id="app" hidden>
+  <div class="topbar">
+    <div class="topbar-in">
+      <h1>Roland Blindenberg<small>Administration des œuvres</small></h1>
+      <button class="btn btn-quiet" id="backupBtn" type="button">Sauvegarde</button>
+      <button class="btn btn-quiet" id="siteBtn" type="button">Voir le site</button>
+      <button class="btn btn-quiet" id="logoutBtn" type="button">Quitter</button>
+      <button class="btn btn-primary" id="saveBtn" type="button" disabled>Enregistrer</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="tabs" id="tabs"></div>
+    <div id="list"></div>
+    <div class="addbar">
+      <button class="btn btn-primary" id="addBtn" type="button">Ajouter une œuvre</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Formulaire d'œuvre ── -->
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-in">
+    <h2 id="sheetTitle">Ajouter une œuvre</h2>
+
+    <div class="field">
+      <label>Photo de l'œuvre</label>
+      <img class="preview" id="preview" hidden alt="">
+      <div class="drop" id="drop">Choisir une photo, ou la déposer ici</div>
+      <input type="file" id="file" accept="image/*" hidden>
+      <div class="hint" id="fileHint">L'image est automatiquement allégée avant l'envoi.</div>
+    </div>
+
+    <div class="field">
+      <label for="fCollection">Série</label>
+      <select id="fCollection"></select>
+    </div>
+
+    <div class="field">
+      <label for="fTitle">Titre <span style="text-transform:none;letter-spacing:0">(français — obligatoire)</span></label>
+      <input type="text" id="fTitle" placeholder="Ensemble nº12">
+    </div>
+
+    <div class="field">
+      <label for="fDims">Dimensions et technique</label>
+      <input type="text" id="fDims" placeholder="100 × 130 cm — Huile sur toile">
+    </div>
+
+    <div class="field">
+      <label for="fDesc">Description</label>
+      <textarea id="fDesc" placeholder="Quelques lignes sur l'œuvre."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Disponibilité</label>
+      <label style="text-transform:none;letter-spacing:0;font-size:15px;color:var(--ink);display:flex;align-items:center;gap:9px;cursor:pointer">
+        <input type="checkbox" id="fAvail" checked style="width:auto"> Disponible à la vente
+      </label>
+    </div>
+
+    <details class="trans">
+      <summary>Traductions anglaise et allemande (facultatives)</summary>
+      <div class="inner">
+        <p class="hint" style="margin:0 0 16px">Si vous laissez ces champs vides, le texte français s'affichera dans les autres langues.</p>
+
+        <div class="field">
+          <label for="fTitleEn">Anglais — titre</label>
+          <input type="text" id="fTitleEn">
+        </div>
+        <div class="field">
+          <label for="fDimsEn">Anglais — dimensions et technique</label>
+          <input type="text" id="fDimsEn" placeholder="100 × 130 cm — Oil on canvas">
+        </div>
+        <div class="field">
+          <label for="fDescEn">Anglais — description</label>
+          <textarea id="fDescEn"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="fTitleDe">Allemand — titre</label>
+          <input type="text" id="fTitleDe">
+        </div>
+        <div class="field">
+          <label for="fDimsDe">Allemand — dimensions et technique</label>
+          <input type="text" id="fDimsDe" placeholder="100 × 130 cm — Öl auf Leinwand">
+        </div>
+        <div class="field">
+          <label for="fDescDe">Allemand — description</label>
+          <textarea id="fDescDe"></textarea>
+        </div>
+      </div>
+    </details>
+
+    <div class="err-inline" id="sheetErr"></div>
+    <div class="sheet-actions">
+      <button class="btn" id="cancelBtn" type="button">Annuler</button>
+      <button class="btn btn-primary" id="okBtn" type="button">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+'use strict';
+
+// ── État ──
+var password = sessionStorage.getItem('rb_pw') || '';
+var content = null;      // { version, collections: [...] }
+var activeKey = null;    // série affichée
+var dirty = false;       // modifications non enregistrées
+var editingId = null;    // œuvre en cours de modification (null = ajout)
+var pendingImage = null; // { path } déposé mais pas encore enregistré
+
+var $ = function (id) { return document.getElementById(id); };
+
+// ── Utilitaires ──
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Les anciennes images sont référencées en relatif (« img/… ») depuis la racine
+// du site ; l'admin vit dans /admin/, il faut donc les ancrer à la racine.
+function imgUrl(src) {
+  return src && src.charAt(0) !== '/' ? '/' + src : src;
+}
+
+function toast(msg, isError) {
+  var t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' err' : '');
+  t.hidden = false;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function () { t.hidden = true; }, isError ? 6000 : 3000);
+}
+
+function setDirty(v) {
+  dirty = v;
+  var btn = $('saveBtn');
+  btn.disabled = !v;
+  btn.innerHTML = v ? '<span class="dirty-dot"></span>Enregistrer' : 'Enregistré';
+}
+
+window.addEventListener('beforeunload', function (e) {
+  if (dirty) { e.preventDefault(); e.returnValue = ''; }
+});
+
+// ── Réseau ──
+function api(path, options) {
+  options = options || {};
+  options.headers = Object.assign({ 'x-admin-password': password }, options.headers || {});
+  return fetch(path, options).then(function (res) {
+    return res.json().catch(function () { return {}; }).then(function (body) {
+      if (!res.ok) throw new Error(body.error || ('Erreur ' + res.status));
+      return body;
+    });
+  });
+}
+
+// ── Connexion ──
+$('loginForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var btn = $('loginBtn');
+  btn.disabled = true;
+  $('loginErr').textContent = '';
+  password = $('pw').value;
+
+  // On valide le mot de passe par une écriture à blanc : une lecture seule
+  // réussirait même sans mot de passe.
+  api('/api/works')
+    .then(function (data) {
+      content = data;
+      return api('/api/works', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    })
+    .then(function () {
+      sessionStorage.setItem('rb_pw', password);
+      start();
+    })
+    .catch(function (err) {
+      password = '';
+      $('loginErr').textContent = err.message;
+      btn.disabled = false;
+    });
+});
+
+$('logoutBtn').addEventListener('click', function () {
+  if (dirty && !confirm('Des modifications ne sont pas enregistrées. Quitter quand même ?')) return;
+  sessionStorage.removeItem('rb_pw');
+  location.reload();
+});
+
+$('siteBtn').addEventListener('click', function () { window.open('/', '_blank'); });
+
+// ── Démarrage ──
+function start() {
+  $('login').hidden = true;
+  $('app').hidden = false;
+  activeKey = content.collections[0].key;
+  setDirty(false);
+  renderTabs();
+  renderList();
+}
+
+function boot() {
+  if (!password) return;
+  api('/api/works')
+    .then(function (data) { content = data; start(); })
+    .catch(function () { sessionStorage.removeItem('rb_pw'); password = ''; });
+}
+boot();
+
+// ── Rendu ──
+function collection(key) {
+  return content.collections.filter(function (c) { return c.key === key; })[0];
+}
+
+function renderTabs() {
+  $('tabs').innerHTML = content.collections.map(function (c) {
+    var label = (c.fr && c.fr.title) || c.key;
+    return '<button class="tab' + (c.key === activeKey ? ' active' : '') + '" data-key="' + esc(c.key) + '">' +
+      esc(label) + '<span>' + c.works.length + '</span></button>';
+  }).join('');
+
+  Array.prototype.forEach.call($('tabs').querySelectorAll('.tab'), function (btn) {
+    btn.addEventListener('click', function () {
+      activeKey = btn.getAttribute('data-key');
+      renderTabs();
+      renderList();
+    });
+  });
+}
+
+function renderList() {
+  var coll = collection(activeKey);
+  var works = coll.works;
+
+  if (!works.length) {
+    $('list').innerHTML = '<div class="empty">Aucune œuvre dans cette série pour l\'instant.</div>';
+    return;
+  }
+
+  $('list').innerHTML = works.map(function (w, i) {
+    var extra = ['en', 'de'].filter(function (l) { return w[l] && w[l].title; });
+    return '<div class="work">' +
+      '<img class="work-thumb" src="' + esc(imgUrl(w.img)) + '" alt="" loading="lazy">' +
+      '<div class="work-main">' +
+        '<div class="work-title">' + esc(w.fr.title) + '</div>' +
+        '<div class="work-dims">' + esc(w.fr.dims) + '</div>' +
+        (w.fr.desc ? '<div class="work-desc">' + esc(w.fr.desc) + '</div>' : '') +
+        '<div class="work-flags">' +
+          '<button class="avail" data-act="avail" data-id="' + esc(w.id) + '">' +
+            '<span class="dot ' + (w.avail ? 'green' : 'gray') + '"></span>' +
+            (w.avail ? 'Disponible' : 'Non disponible') +
+          '</button>' +
+          '<span class="langs">FR' + (extra.length ? ' · ' + extra.join(' · ').toUpperCase() : '') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="work-actions">' +
+        '<div class="row">' +
+          '<button class="btn btn-sm" data-act="up" data-id="' + esc(w.id) + '"' + (i === 0 ? ' disabled' : '') + ' title="Monter">↑</button>' +
+          '<button class="btn btn-sm" data-act="down" data-id="' + esc(w.id) + '"' + (i === works.length - 1 ? ' disabled' : '') + ' title="Descendre">↓</button>' +
+        '</div>' +
+        '<button class="btn btn-sm" data-act="edit" data-id="' + esc(w.id) + '">Modifier</button>' +
+        '<button class="btn btn-sm btn-danger" data-act="del" data-id="' + esc(w.id) + '">Retirer</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  Array.prototype.forEach.call($('list').querySelectorAll('[data-act]'), function (btn) {
+    btn.addEventListener('click', function () {
+      onAction(btn.getAttribute('data-act'), btn.getAttribute('data-id'));
+    });
+  });
+}
+
+function onAction(act, id) {
+  var works = collection(activeKey).works;
+  var i = works.findIndex(function (w) { return w.id === id; });
+  if (i < 0) return;
+
+  if (act === 'avail') {
+    works[i].avail = !works[i].avail;
+    setDirty(true);
+    renderList();
+  } else if (act === 'up' || act === 'down') {
+    var j = act === 'up' ? i - 1 : i + 1;
+    if (j < 0 || j >= works.length) return;
+    var tmp = works[i]; works[i] = works[j]; works[j] = tmp;
+    setDirty(true);
+    renderList();
+  } else if (act === 'del') {
+    if (!confirm('Retirer « ' + works[i].fr.title + ' » du site ?')) return;
+    works.splice(i, 1);
+    setDirty(true);
+    renderTabs();
+    renderList();
+  } else if (act === 'edit') {
+    openSheet(works[i]);
+  }
+}
+
+// ── Formulaire ──
+function openSheet(work) {
+  editingId = work ? work.id : null;
+  pendingImage = null;
+
+  $('sheetTitle').textContent = work ? 'Modifier l\'œuvre' : 'Ajouter une œuvre';
+  $('okBtn').textContent = work ? 'Valider' : 'Ajouter';
+  $('sheetErr').textContent = '';
+
+  $('fCollection').innerHTML = content.collections.map(function (c) {
+    return '<option value="' + esc(c.key) + '">' + esc((c.fr && c.fr.title) || c.key) + '</option>';
+  }).join('');
+  $('fCollection').value = activeKey;
+
+  var fr = work ? work.fr : { title: '', dims: '', desc: '' };
+  var en = (work && work.en) || { title: '', dims: '', desc: '' };
+  var de = (work && work.de) || { title: '', dims: '', desc: '' };
+
+  $('fTitle').value = fr.title; $('fDims').value = fr.dims; $('fDesc').value = fr.desc;
+  $('fTitleEn').value = en.title; $('fDimsEn').value = en.dims; $('fDescEn').value = en.desc;
+  $('fTitleDe').value = de.title; $('fDimsDe').value = de.dims; $('fDescDe').value = de.desc;
+  $('fAvail').checked = work ? work.avail : true;
+
+  var prev = $('preview');
+  if (work) {
+    prev.src = imgUrl(work.img);
+    prev.hidden = false;
+    $('drop').textContent = 'Remplacer la photo';
+  } else {
+    prev.hidden = true;
+    prev.removeAttribute('src');
+    $('drop').textContent = 'Choisir une photo, ou la déposer ici';
+  }
+  $('fileHint').textContent = "L'image est automatiquement allégée avant l'envoi.";
+  $('file').value = '';
+
+  $('sheet').hidden = false;
+}
+
+function closeSheet() {
+  $('sheet').hidden = true;
+  editingId = null;
+  pendingImage = null;
+}
+
+$('addBtn').addEventListener('click', function () { openSheet(null); });
+$('cancelBtn').addEventListener('click', closeSheet);
+$('sheet').addEventListener('click', function (e) { if (e.target === $('sheet')) closeSheet(); });
+
+// ── Photo : redimensionnement dans le navigateur puis envoi ──
+$('drop').addEventListener('click', function () { $('file').click(); });
+$('drop').addEventListener('dragover', function (e) { e.preventDefault(); $('drop').classList.add('over'); });
+$('drop').addEventListener('dragleave', function () { $('drop').classList.remove('over'); });
+$('drop').addEventListener('drop', function (e) {
+  e.preventDefault();
+  $('drop').classList.remove('over');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+$('file').addEventListener('change', function () {
+  if (this.files && this.files[0]) handleFile(this.files[0]);
+});
+
+var MAX_SIDE = 1800;
+
+function shrink(file) {
+  return createImageBitmap(file, { imageOrientation: 'from-image' }).then(function (bmp) {
+    var scale = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+    var w = Math.round(bmp.width * scale);
+    var h = Math.round(bmp.height * scale);
+    var canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
+    bmp.close();
+
+    return new Promise(function (resolve, reject) {
+      canvas.toBlob(function (blob) {
+        if (blob && blob.type === 'image/webp') return resolve(blob);
+        // Navigateur sans encodage WebP : on retombe sur le JPEG.
+        canvas.toBlob(function (jpg) {
+          jpg ? resolve(jpg) : reject(new Error("Impossible de préparer l'image."));
+        }, 'image/jpeg', 0.85);
+      }, 'image/webp', 0.85);
+    });
+  });
+}
+
+function handleFile(file) {
+  if (!/^image\//.test(file.type)) {
+    $('fileHint').textContent = 'Ce fichier n\'est pas une image.';
+    return;
+  }
+  $('fileHint').textContent = 'Préparation de l\'image…';
+  $('okBtn').disabled = true;
+
+  shrink(file)
+    .then(function (blob) {
+      $('fileHint').textContent = 'Envoi en cours…';
+      return api('/api/upload', {
+        method: 'POST',
+        headers: { 'content-type': blob.type, 'x-filename': file.name },
+        body: blob
+      }).then(function (res) { return { res: res, blob: blob }; });
+    })
+    .then(function (out) {
+      pendingImage = { path: out.res.path };
+      var prev = $('preview');
+      prev.src = URL.createObjectURL(out.blob);
+      prev.hidden = false;
+      $('drop').textContent = 'Remplacer la photo';
+      $('fileHint').textContent =
+        'Image prête — ' + Math.round(out.res.bytes / 1024) + ' Ko (contre ' +
+        Math.round(file.size / 1024) + ' Ko à l\'origine).';
+    })
+    .catch(function (err) {
+      $('fileHint').textContent = err.message;
+    })
+    .then(function () { $('okBtn').disabled = false; });
+}
+
+// ── Validation et enregistrement dans l'état local ──
+$('okBtn').addEventListener('click', function () {
+  var title = $('fTitle').value.trim();
+  if (!title) { $('sheetErr').textContent = 'Le titre en français est obligatoire.'; return; }
+
+  var targetKey = $('fCollection').value;
+  var existing = null;
+  var sourceColl = null;
+
+  if (editingId) {
+    content.collections.forEach(function (c) {
+      var w = c.works.filter(function (x) { return x.id === editingId; })[0];
+      if (w) { existing = w; sourceColl = c; }
+    });
+  }
+
+  var img = pendingImage ? pendingImage.path : (existing ? existing.img : null);
+  if (!img) { $('sheetErr').textContent = 'Une photo de l\'œuvre est nécessaire.'; return; }
+
+  var work = {
+    id: existing ? existing.id : targetKey + '-' + Date.now().toString(36),
+    img: img,
+    avail: $('fAvail').checked,
+    fr: { title: title, dims: $('fDims').value.trim(), desc: $('fDesc').value.trim() }
+  };
+
+  [['en', 'En'], ['de', 'De']].forEach(function (pair) {
+    var t = $('fTitle' + pair[1]).value.trim();
+    var d = $('fDims' + pair[1]).value.trim();
+    var x = $('fDesc' + pair[1]).value.trim();
+    if (t || d || x) work[pair[0]] = { title: t, dims: d, desc: x };
+  });
+
+  if (existing) {
+    if (sourceColl.key === targetKey) {
+      var idx = sourceColl.works.indexOf(existing);
+      sourceColl.works[idx] = work;
+    } else {
+      sourceColl.works.splice(sourceColl.works.indexOf(existing), 1);
+      collection(targetKey).works.push(work);
+    }
+  } else {
+    collection(targetKey).works.push(work);
+  }
+
+  activeKey = targetKey;
+  setDirty(true);
+  closeSheet();
+  renderTabs();
+  renderList();
+});
+
+// ── Publication ──
+$('saveBtn').addEventListener('click', function () {
+  var btn = $('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Enregistrement…';
+
+  api('/api/works', {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(content)
+  })
+    .then(function (res) {
+      setDirty(false);
+      toast('Le site est à jour — ' + res.works + ' œuvres en ligne.');
+    })
+    .catch(function (err) {
+      setDirty(true);
+      toast(err.message, true);
+    });
+});
+
+// ── Sauvegarde locale du contenu ──
+$('backupBtn').addEventListener('click', function () {
+  var blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'oeuvres-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+</script>
+
+</body>
+</html>

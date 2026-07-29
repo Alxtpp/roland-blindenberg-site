@@ -1,6 +1,11 @@
-# Site statique : rien à compiler, on publie la racine telle quelle.
+# Site statique : rien à compiler, on publie le dossier `public` tel quel.
+# Les fonctions (admin) vivent à côté, dans netlify/functions.
 [build]
-  publish = "."
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 # Les visuels des œuvres ne changent jamais une fois en ligne : cache long.
 [[headers]]
@@ -8,8 +13,15 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000"
 
-# La page, elle, doit toujours être fraîche après un déploiement.
+# Les pages doivent toujours être fraîches après un déploiement.
 [[headers]]
   for = "/index.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# L'admin ne doit jamais être mise en cache ni indexée par les moteurs.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    Cache-Control = "no-store"
+    X-Robots-Tag = "noindex, nofollow"

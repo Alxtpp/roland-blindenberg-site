@@ -1,0 +1,495 @@
+{
+  "version": 1,
+  "collections": [
+    {
+      "key": "ensemble",
+      "fr": {
+        "title": "ENSEMBLE",
+        "medium": "Abstraction figurative",
+        "desc": "Les surfaces colorées composent un espace lumineux. Des silhouettes se confondent, ne forment qu’un. Ensemble, libres dans l’espace apaisé… Enfin."
+      },
+      "en": {
+        "title": "ENSEMBLE",
+        "medium": "Figurative abstraction",
+        "desc": "Coloured surfaces compose a luminous space. Silhouettes merge, becoming one. Together, free in the stillness of space… At last."
+      },
+      "de": {
+        "title": "ENSEMBLE",
+        "medium": "Figurative Abstraktion",
+        "desc": "Farbige Flächen bilden einen leuchtenden Raum. Silhouetten verschmelzen, werden eins. Gemeinsam, frei im befriedeten Raum… Endlich."
+      },
+      "works": [
+        {
+          "id": "ensemble-1",
+          "img": "img/Ensemble%20Image%202026-04-05%20at%2019.17.24.jpeg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº1",
+            "dims": "100 × 130 cm — Huile sur toile",
+            "desc": "Deux silhouettes assises sur un fond de ciel rose et de prairie verte. Les couleurs vives découpent les corps comme des vitraux."
+          },
+          "en": {
+            "title": "Ensemble nº1",
+            "dims": "100 × 130 cm — Oil on canvas",
+            "desc": "Two seated silhouettes against a pink sky and green meadow. Vivid colours carve the bodies like stained glass."
+          },
+          "de": {
+            "title": "Ensemble nº1",
+            "dims": "100 × 130 cm — Öl auf Leinwand",
+            "desc": "Zwei sitzende Silhouetten vor rosa Himmel und grüner Wiese. Lebhafte Farben schneiden die Körper wie Buntglas."
+          }
+        },
+        {
+          "id": "ensemble-2",
+          "img": "img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(1).jpeg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº2",
+            "dims": "120 × 120 cm — Huile sur toile",
+            "desc": "Cinq figures rassemblées sous un ciel bleu. Les masses colorées s’imbriquent, créant un jeu de superpositions et de transparences."
+          },
+          "en": {
+            "title": "Ensemble nº2",
+            "dims": "120 × 120 cm — Oil on canvas",
+            "desc": "Five figures gathered under a blue sky. Coloured masses interlock, creating a play of overlays and transparencies."
+          },
+          "de": {
+            "title": "Ensemble nº2",
+            "dims": "120 × 120 cm — Öl auf Leinwand",
+            "desc": "Fünf Figuren unter blauem Himmel versammelt. Farbige Massen greifen ineinander und schaffen ein Spiel aus Überlagerungen und Transparenzen."
+          }
+        },
+        {
+          "id": "ensemble-3",
+          "img": "img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(2).jpeg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº3",
+            "dims": "80 × 110 cm — Huile sur toile",
+            "desc": "Silhouettes sur un banc, traitées en aplats beiges sur fond de bandes horizontales vives. La scène quotidienne devient abstraite."
+          },
+          "en": {
+            "title": "Ensemble nº3",
+            "dims": "80 × 110 cm — Oil on canvas",
+            "desc": "Silhouettes on a bench, rendered in beige flat tones against vivid horizontal bands. The everyday scene becomes abstract."
+          },
+          "de": {
+            "title": "Ensemble nº3",
+            "dims": "80 × 110 cm — Öl auf Leinwand",
+            "desc": "Silhouetten auf einer Bank, in beigen Flachtönen gegen lebhafte horizontale Streifen dargestellt. Die Alltagsszene wird abstrakt."
+          }
+        },
+        {
+          "id": "ensemble-4",
+          "img": "img/Ensemble%20Image%202026-04-05%20at%2019.17.25.jpeg",
+          "avail": false,
+          "fr": {
+            "title": "Ensemble nº4",
+            "dims": "100 × 140 cm — Huile sur toile",
+            "desc": "Trois figures sur fond rouge et violet. Le geste est plus libre, la matière plus épaisse. Signé ROLL."
+          },
+          "en": {
+            "title": "Ensemble nº4",
+            "dims": "100 × 140 cm — Oil on canvas",
+            "desc": "Three figures against a red and purple background. The gesture is freer, the material thicker. Signed ROLL."
+          },
+          "de": {
+            "title": "Ensemble nº4",
+            "dims": "100 × 140 cm — Öl auf Leinwand",
+            "desc": "Drei Figuren vor rotem und violettem Hintergrund. Die Geste ist freier, das Material dicker. Signiert ROLL."
+          }
+        },
+        {
+          "id": "ensemble-5",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0717.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº5",
+            "dims": "120 × 120 cm — Huile sur toile",
+            "desc": "Trois corps entrelacés sur fond rose vif et vert. Le jaune, le bleu et le rose se superposent dans une étreinte chromatique."
+          },
+          "en": {
+            "title": "Ensemble nº5",
+            "dims": "120 × 120 cm — Oil on canvas",
+            "desc": "Three intertwined bodies against vivid pink and green. Yellow, blue and pink overlap in a chromatic embrace."
+          },
+          "de": {
+            "title": "Ensemble nº5",
+            "dims": "120 × 120 cm — Öl auf Leinwand",
+            "desc": "Drei verschlungene Körper vor leuchtendem Rosa und Grün. Gelb, Blau und Rosa überlagern sich in einer chromatischen Umarmung."
+          }
+        },
+        {
+          "id": "ensemble-6",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0723.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº6",
+            "dims": "100 × 130 cm — Huile sur toile",
+            "desc": "Trois silhouettes assises, ciel rose et prairie verte. Les couleurs — orange, bleu, violet — s’enchevêtrent avec vivacité."
+          },
+          "en": {
+            "title": "Ensemble nº6",
+            "dims": "100 × 130 cm — Oil on canvas",
+            "desc": "Three seated silhouettes, pink sky and green meadow. Orange, blue and violet interweave with vivacity."
+          },
+          "de": {
+            "title": "Ensemble nº6",
+            "dims": "100 × 130 cm — Öl auf Leinwand",
+            "desc": "Drei sitzende Silhouetten, rosa Himmel und grüne Wiese. Orange, Blau und Violett verflechten sich mit Lebhaftigkeit."
+          }
+        },
+        {
+          "id": "ensemble-7",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0836.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº7",
+            "dims": "100 × 130 cm — Huile sur toile",
+            "desc": "Cinq figures debout sur fond bleu et violet. La figure centrale s’impose, les corps colorés forment un cercle protecteur."
+          },
+          "en": {
+            "title": "Ensemble nº7",
+            "dims": "100 × 130 cm — Oil on canvas",
+            "desc": "Five standing figures against blue and violet. The central figure asserts itself, coloured bodies form a protective circle."
+          },
+          "de": {
+            "title": "Ensemble nº7",
+            "dims": "100 × 130 cm — Öl auf Leinwand",
+            "desc": "Fünf stehende Figuren vor blauem und violettem Hintergrund. Die zentrale Figur behauptet sich, farbige Körper bilden einen schützenden Kreis."
+          }
+        },
+        {
+          "id": "ensemble-8",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0837.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº8",
+            "dims": "100 × 140 cm — Huile sur toile",
+            "desc": "Figures assises sur fond rouge-orangé et violet. Les masses de couleur — vert, jaune, bleu — créent une densité presque sculpturale."
+          },
+          "en": {
+            "title": "Ensemble nº8",
+            "dims": "100 × 140 cm — Oil on canvas",
+            "desc": "Seated figures against red-orange and violet. Masses of green, yellow and blue create an almost sculptural density."
+          },
+          "de": {
+            "title": "Ensemble nº8",
+            "dims": "100 × 140 cm — Öl auf Leinwand",
+            "desc": "Sitzende Figuren vor Rot-Orange und Violett. Massen aus Grün, Gelb und Blau schaffen eine fast skulpturale Dichte."
+          }
+        },
+        {
+          "id": "ensemble-9",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0838.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº9",
+            "dims": "100 × 140 cm — Huile sur toile",
+            "desc": "Deux figures enlacées sous un ciel bleu. Le jaune, le vert et le violet dialoguent dans un moment de complicité."
+          },
+          "en": {
+            "title": "Ensemble nº9",
+            "dims": "100 × 140 cm — Oil on canvas",
+            "desc": "Two figures entwined under a blue sky. Yellow, green and violet converse in a moment of complicity."
+          },
+          "de": {
+            "title": "Ensemble nº9",
+            "dims": "100 × 140 cm — Öl auf Leinwand",
+            "desc": "Zwei umschlungene Figuren unter blauem Himmel. Gelb, Grün und Violett dialogieren in einem Moment der Komplizenschaft."
+          }
+        },
+        {
+          "id": "ensemble-10",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0839.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº10",
+            "dims": "80 × 100 cm — Huile sur toile",
+            "desc": "Figures allongées, composition horizontale. Le ciel bleu et le sol rose encadrent des corps en repos, baignés de couleur."
+          },
+          "en": {
+            "title": "Ensemble nº10",
+            "dims": "80 × 100 cm — Oil on canvas",
+            "desc": "Reclining figures, horizontal composition. Blue sky and pink ground frame bodies at rest, bathed in colour."
+          },
+          "de": {
+            "title": "Ensemble nº10",
+            "dims": "80 × 100 cm — Öl auf Leinwand",
+            "desc": "Liegende Figuren, horizontale Komposition. Blauer Himmel und rosa Boden rahmen ruhende, in Farbe getauchte Körper."
+          }
+        },
+        {
+          "id": "ensemble-11",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0841.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Ensemble nº11",
+            "dims": "100 × 130 cm — Huile sur toile",
+            "desc": "Vue plongeante sur des figures enchevêtrées. Le vert vif et l’orange créent une énergie tourbillonnante. Signé ROLL."
+          },
+          "en": {
+            "title": "Ensemble nº11",
+            "dims": "100 × 130 cm — Oil on canvas",
+            "desc": "Bird's-eye view of entangled figures. Vivid green and orange create a swirling energy. Signed ROLL."
+          },
+          "de": {
+            "title": "Ensemble nº11",
+            "dims": "100 × 130 cm — Öl auf Leinwand",
+            "desc": "Vogelperspektive auf verschlungene Figuren. Leuchtendes Grün und Orange erzeugen eine wirbelnde Energie. Signiert ROLL."
+          }
+        }
+      ]
+    },
+    {
+      "key": "trajectoire",
+      "fr": {
+        "title": "INSTANT",
+        "medium": "fusain",
+        "desc": "Un modèle, un fusain… Quelques lignes… Avant pas encore, après jamais plus… Liberté, intuition, création… En équilibre sur le point de l’instant. Ce minuscule printemps qui ne sera jamais qu’une fois. — cf. Vladimir Jankélévitch"
+      },
+      "en": {
+        "title": "INSTANT",
+        "medium": "Charcoal",
+        "desc": "A model, a stick of charcoal… A few lines… Not yet before, never again after… Freedom, intuition, creation… Balanced on the point of the instant. This tiny spring that will only ever be, once. — after Vladimir Jankélévitch"
+      },
+      "de": {
+        "title": "INSTANT",
+        "medium": "Kohle",
+        "desc": "Ein Modell, eine Kohle… Ein paar Linien… Vorher noch nicht, nachher nie mehr… Freiheit, Intuition, Schöpfung… Im Gleichgewicht auf dem Punkt des Augenblicks. Dieser winzige Frühling, den es nur ein einziges Mal geben wird. — nach Vladimir Jankélévitch"
+      },
+      "works": [
+        {
+          "id": "trajectoire-1",
+          "img": "img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32.jpeg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº1",
+            "dims": "65 × 90 cm — Fusain sur papier",
+            "desc": "Figures enchevêtrées dans un réseau de traits noirs. Le fusain compressé donne une densité presque sculpturale au dessin."
+          },
+          "en": {
+            "title": "Trajectoire nº1",
+            "dims": "65 × 90 cm — Charcoal on paper",
+            "desc": "Figures entangled in a network of black strokes. Compressed charcoal gives an almost sculptural density to the drawing."
+          },
+          "de": {
+            "title": "Trajectoire nº1",
+            "dims": "65 × 90 cm — Kohle auf Papier",
+            "desc": "In einem Netz schwarzer Striche verflochtene Figuren. Komprimierte Kohle verleiht der Zeichnung eine fast skulpturale Dichte."
+          }
+        },
+        {
+          "id": "trajectoire-2",
+          "img": "img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32%20(1).jpeg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº2",
+            "dims": "50 × 70 cm — Encre sur papier",
+            "desc": "Deux figures esquissées d’un trait continu. La ligne ne se ferme jamais, elle rebondit d’un corps à l’autre."
+          },
+          "en": {
+            "title": "Trajectoire nº2",
+            "dims": "50 × 70 cm — Ink on paper",
+            "desc": "Two figures sketched in a continuous line. The line never closes, it bounces from one body to another."
+          },
+          "de": {
+            "title": "Trajectoire nº2",
+            "dims": "50 × 70 cm — Tusche auf Papier",
+            "desc": "Zwei Figuren in einer durchgehenden Linie skizziert. Die Linie schliesst sich nie, sie springt von einem Körper zum anderen."
+          }
+        },
+        {
+          "id": "trajectoire-3",
+          "img": "img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32%20(2).jpeg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº3",
+            "dims": "65 × 90 cm — Sanguine sur papier",
+            "desc": "Groupe de figures à la sanguine. Le rouge terreux du pigment donne une chaleur organique à l’enchevêtrement des corps."
+          },
+          "en": {
+            "title": "Trajectoire nº3",
+            "dims": "65 × 90 cm — Sanguine on paper",
+            "desc": "Group of figures in sanguine. The earthy red of the pigment gives an organic warmth to the entanglement of bodies."
+          },
+          "de": {
+            "title": "Trajectoire nº3",
+            "dims": "65 × 90 cm — Sanguine auf Papier",
+            "desc": "Figurengruppe in Sanguine. Das erdige Rot des Pigments verleiht der Verflechtung der Körper eine organische Wärme."
+          }
+        },
+        {
+          "id": "trajectoire-4",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0832.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº4",
+            "dims": "50 × 65 cm — Fusain sur papier",
+            "desc": "Figure assise, trait fin et délicat. Le fusain effleure le papier, capturant l’intimité d’un moment de repos."
+          },
+          "en": {
+            "title": "Trajectoire nº4",
+            "dims": "50 × 65 cm — Charcoal on paper",
+            "desc": "Seated figure, fine and delicate strokes. The charcoal barely touches the paper, capturing the intimacy of a moment of rest."
+          }
+        },
+        {
+          "id": "trajectoire-5",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0833.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº5",
+            "dims": "50 × 70 cm — Fusain sur papier",
+            "desc": "Figure recroquevillée, dessinée d’un trait continu. La signature ROLL ancre la composition dans le coin inférieur."
+          },
+          "en": {
+            "title": "Trajectoire nº5",
+            "dims": "50 × 70 cm — Charcoal on paper",
+            "desc": "Curled-up figure drawn in a continuous line. The ROLL signature anchors the composition in the lower corner."
+          }
+        },
+        {
+          "id": "trajectoire-6",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0834.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº6",
+            "dims": "65 × 90 cm — Sanguine sur papier",
+            "desc": "Trois figures enlacées à la sanguine. Le pigment rouge terreux traduit la chaleur des corps imbriqués."
+          },
+          "en": {
+            "title": "Trajectoire nº6",
+            "dims": "65 × 90 cm — Sanguine on paper",
+            "desc": "Three entwined figures in sanguine. The earthy red pigment conveys the warmth of interlocking bodies."
+          }
+        },
+        {
+          "id": "trajectoire-7",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0734.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº7",
+            "dims": "65 × 85 cm — Fusain sur papier",
+            "desc": "Figure masculine, bras levés. Le fusain appuyé donne une force expressive au mouvement ascendant du corps."
+          },
+          "en": {
+            "title": "Trajectoire nº7",
+            "dims": "65 × 85 cm — Charcoal on paper",
+            "desc": "Male figure, arms raised. Bold charcoal gives expressive force to the ascending movement of the body."
+          }
+        },
+        {
+          "id": "trajectoire-8",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0735.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº8",
+            "dims": "50 × 70 cm — Fusain sur papier",
+            "desc": "Figure allongée, le visage entre les mains. Le trait délicat traduit un moment d’abandon et de rêverie."
+          },
+          "en": {
+            "title": "Trajectoire nº8",
+            "dims": "50 × 70 cm — Charcoal on paper",
+            "desc": "Reclining figure, face between the hands. Delicate strokes convey a moment of surrender and reverie."
+          }
+        },
+        {
+          "id": "trajectoire-9",
+          "img": "img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0736.jpg",
+          "avail": true,
+          "fr": {
+            "title": "Trajectoire nº9",
+            "dims": "65 × 85 cm — Fusain sur papier",
+            "desc": "Groupe dense de figures enchevêtrées. Le fusain compressé crée une masse sculpturale, presque monumentale."
+          },
+          "en": {
+            "title": "Trajectoire nº9",
+            "dims": "65 × 85 cm — Charcoal on paper",
+            "desc": "Dense group of entangled figures. Compressed charcoal creates a sculptural, almost monumental mass."
+          }
+        }
+      ]
+    },
+    {
+      "key": "corps",
+      "fr": {
+        "title": "Autres séries",
+        "medium": "",
+        "desc": ""
+      },
+      "en": {
+        "title": "Other series",
+        "medium": "",
+        "desc": ""
+      },
+      "de": {
+        "title": "Weitere Serien",
+        "medium": "",
+        "desc": ""
+      },
+      "works": [
+        {
+          "id": "corps-1",
+          "img": "img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.25.jpeg",
+          "avail": true,
+          "fr": {
+            "title": "Corps à corps nº1",
+            "dims": "80 × 120 cm — Huile sur toile",
+            "desc": "Deux corps enlacés, traités en grisaille. Les mains et les bras structurent la composition dans un mouvement d’étreinte."
+          },
+          "en": {
+            "title": "Corps à corps nº1",
+            "dims": "80 × 120 cm — Oil on canvas",
+            "desc": "Two entwined bodies in grisaille. Hands and arms structure the composition in an embracing movement."
+          },
+          "de": {
+            "title": "Corps à corps nº1",
+            "dims": "80 × 120 cm — Öl auf Leinwand",
+            "desc": "Zwei umschlungene Körper in Grisaille. Hände und Arme strukturieren die Komposition in einer umarmenden Bewegung."
+          }
+        },
+        {
+          "id": "corps-2",
+          "img": "img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.25%20(1).jpeg",
+          "avail": false,
+          "fr": {
+            "title": "Corps à corps nº2",
+            "dims": "100 × 140 cm — Huile sur toile",
+            "desc": "Un couple en gros plan. La lumière sculpte les volumes avec une intensité presque photographique, mais le grain de la peinture reste visible."
+          },
+          "en": {
+            "title": "Corps à corps nº2",
+            "dims": "100 × 140 cm — Oil on canvas",
+            "desc": "A couple in close-up. Light sculpts the volumes with almost photographic intensity, but the grain of the paint remains visible."
+          },
+          "de": {
+            "title": "Corps à corps nº2",
+            "dims": "100 × 140 cm — Öl auf Leinwand",
+            "desc": "Ein Paar in Nahaufnahme. Licht modelliert die Volumen mit fast fotografischer Intensität, aber die Körnung der Farbe bleibt sichtbar."
+          }
+        },
+        {
+          "id": "corps-3",
+          "img": "img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.26.jpeg",
+          "avail": true,
+          "fr": {
+            "title": "Corps à corps nº3",
+            "dims": "80 × 120 cm — Huile sur toile",
+            "desc": "Figure masculine en grisaille. Le regard direct, les mains puissantes. La matière picturale traduit la présence physique."
+          },
+          "en": {
+            "title": "Corps à corps nº3",
+            "dims": "80 × 120 cm — Oil on canvas",
+            "desc": "Male figure in grisaille. The direct gaze, the powerful hands. The pictorial material conveys physical presence."
+          },
+          "de": {
+            "title": "Corps à corps nº3",
+            "dims": "80 × 120 cm — Öl auf Leinwand",
+            "desc": "Männliche Figur in Grisaille. Der direkte Blick, die kräftigen Hände. Das malerische Material vermittelt physische Präsenz."
+          }
+        }
+      ]
+    }
+  ]
+}
