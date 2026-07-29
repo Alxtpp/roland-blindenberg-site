@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roland — Peintre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300&family=DM+Sans:ital,wght@0,300;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #fafafa;
+  --fg: #0a0a0a;
+  --font-display: 'Outfit', sans-serif;
+  --font-hero: 'Outfit', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --pad: 28px;
+  --gutter: 16px;
+}
+@media (min-width: 900px) {
+  :root { --gutter: 40px; }
+}
+
+html { scroll-behavior: auto; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; }
+
+/* ── NAVBAR ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px var(--pad);
+  background: var(--bg);
+}
+.navbar-logo,
+.navbar-menu-btn {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--fg);
+}
+.navbar-logo {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  line-height: 0;
+}
+.navbar-logo img {
+  display: block;
+  height: 30px;
+  width: auto;
+  mix-blend-mode: multiply;   /* efface le fond blanc du PNG sur le fond clair */
+}
+.navbar-lang {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  display: flex;
+  gap: 6px;
+}
+.navbar-lang span {
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+.navbar-lang span.active { color: var(--fg); }
+
+/* Desktop inline nav — hidden on mobile (hamburger "Menu" used instead) */
+.navbar-links { display: none; }
+@media (min-width: 900px) {
+  .navbar-logo img { height: 38px; }   /* légèrement plus grand sur ordinateur */
+  .navbar-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    order: 2;
+    margin-left: auto;               /* pousse liens + langues vers la droite */
+  }
+  .navbar-lang { order: 3; margin-left: 28px; }   /* langues à l'extrême droite */
+  .navbar-links a {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .navbar-links a:hover { opacity: 0.4; }
+  .navbar-menu-btn { display: none; }
+}
+
+/* ── MENU OVERLAY ── */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.menu-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.menu-close {
+  position: absolute;
+  top: 18px;
+  right: var(--pad);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.15em;
+  background: none;
+  border: none;
+  color: var(--fg);
+  cursor: pointer;
+}
+.menu-links {
+  list-style: none;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.menu-links li {
+  overflow: hidden;
+}
+.menu-links a {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(32px, 7.5vw, 56px);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.4s ease;
+}
+.menu-overlay.open .menu-links a {
+  transform: translateY(0);
+  opacity: 1;
+}
+.menu-links a:hover { opacity: 0.3; }
+
+/* Sub-collection links */
+.menu-links li.menu-sub {
+  margin-top: -2px;
+}
+.menu-links li.menu-sub a {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(18px, 4vw, 28px);
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+  color: #555;
+}
+.menu-links li.menu-sub a:hover { opacity: 0.3; }
+
+/* Stagger delays */
+.menu-overlay.open .menu-links li:nth-child(1) a { transition-delay: 0.05s; }
+.menu-overlay.open .menu-links li:nth-child(2) a { transition-delay: 0.08s; }
+.menu-overlay.open .menu-links li:nth-child(3) a { transition-delay: 0.11s; }
+.menu-overlay.open .menu-links li:nth-child(4) a { transition-delay: 0.14s; }
+.menu-overlay.open .menu-links li:nth-child(5) a { transition-delay: 0.17s; }
+.menu-overlay.open .menu-links li:nth-child(6) a { transition-delay: 0.20s; }
+.menu-overlay.open .menu-links li:nth-child(7) a { transition-delay: 0.23s; }
+.menu-overlay.open .menu-links li:nth-child(8) a { transition-delay: 0.26s; }
+
+.menu-bottom {
+  position: absolute;
+  bottom: 20px;
+  left: var(--pad);
+  right: var(--pad);
+  border-top: 1px solid #ddd;
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+}
+.menu-bottom a { text-decoration: none; }
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── PAINTING IMAGES ── */
+.painting {
+  display: block;
+  width: 100%;
+  padding: 0 var(--gutter);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+img.painting {
+  width: calc(100% - var(--gutter) * 2);
+  margin-left: var(--gutter);
+  margin-right: var(--gutter);
+  padding: 0;
+}
+
+/* Hero painting (homepage) — cropped to invite scroll */
+.painting-hero {
+  padding: 0 var(--gutter);
+  box-sizing: border-box;
+}
+.painting-hero img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  height: auto;
+  object-fit: cover;
+  object-position: center 18%;
+  display: block;
+}
+@media (min-width: 700px) {
+  .painting-hero img {
+    aspect-ratio: 21 / 9;
+  }
+}
+
+/* ── GALLERY ROWS — uniform 2-up grid, full page width ── */
+.gallery-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gutter);
+  padding: 0 var(--pad);       /* outer edges aligned with navbar / Menu button */
+  margin-bottom: calc(var(--gutter) * 2);
+  align-items: start;          /* top-align; landscape pieces stay shorter */
+}
+.gallery-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.gallery-item img {
+  display: block;
+  width: 100%;                 /* fill the column; height follows natural ratio */
+  height: auto;
+  object-fit: contain;         /* never crop */
+  cursor: pointer;
+}
+/* Mobile — single full-width column (unchanged) */
+@media (max-width: 700px) {
+  .gallery-row { grid-template-columns: 1fr; }
+}
+
+/* ── DISPLAY TEXT (aerated, mixed case, Base Design vibe) ── */
+.display-block {
+  padding: 64px var(--gutter) 0;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.display-phrase {
+  font-family: var(--font-hero);
+  font-weight: 200;
+  font-size: clamp(36px, 6vw, 72px);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+
+/* ── TAGLINE ── */
+.tagline {
+  text-align: center;
+  padding: 32px var(--pad) 0;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 420px;
+  margin: 0 auto;
+  font-style: italic;
+  color: #333;
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #999;
+  padding: 48px var(--pad) 16px;
+}
+
+/* ── COLLECTION ROWS ── */
+.collection-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px var(--pad);
+  border-top: 1px solid #ddd;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.collection-row:last-child { border-bottom: 1px solid #ddd; }
+.collection-row:hover { background: #f0f0f0; }
+.collection-row-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.collection-row-name {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(18px, 2.8vw, 28px);   /* une seule taille : nom + médium sur la même ligne */
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--fg);                       /* tout en noir (plus de sous-titre gris) */
+}
+/* Le nom (ENSEMBLE / INSTANT) est en capitales + guillemets dans le texte lui-même ;
+   pas de text-transform. Le médium reste à la même taille, juste en minuscules. */
+@media (max-width: 700px) {
+  .cr-medium { display: none; }   /* mobile : « Abstraction figurative. » masqué → Série "ENSEMBLE" */
+}
+.collection-row-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.collection-row-right .arrow {
+  font-size: 18px;
+  transition: transform 0.2s;
+  color: var(--fg);
+}
+.collection-row:hover .arrow { transform: translateX(4px); }
+
+/* ── DARK BLOCK (expositions teaser) ── */
+.dark-block {
+  background: #0a0a0a;
+  padding: 80px var(--pad);
+  position: relative;
+  overflow: hidden;
+  margin-top: 64px;
+}
+.dark-block-bg {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(60px, 18vw, 180px);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.06);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.dark-block-link {
+  position: relative;
+  z-index: 1;
+  color: #aaa;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.dark-block-link:hover { color: #fff; }
+
+/* ── CONTACT TEASER ── */
+.contact-teaser {
+  padding: 100px var(--pad);
+  text-align: center;
+}
+.contact-teaser-phrase {
+  font-family: var(--font-hero);
+  font-weight: 200;
+  font-size: clamp(36px, 6vw, 72px);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+  max-width: 900px;
+  margin: 0 auto 24px;
+}
+.contact-teaser a {
+  font-size: 14px;
+  color: #555;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── FOOTER (refined, Base Design inspired) ── */
+.site-footer {
+  border-top: 1px solid #ddd;
+  padding: 56px var(--gutter) 0;
+  margin-top: 64px;
+  color: var(--fg);
+}
+.footer-cols {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+  padding-bottom: 48px;
+}
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+.footer-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #999;
+  font-weight: 400;
+}
+.footer-link, .footer-value {
+  font-size: 14px;
+  color: var(--fg);
+  text-decoration: none;
+  line-height: 1.5;
+}
+.footer-link:hover { opacity: 0.6; }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #eee;
+  padding: 18px 0 22px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+}
+.footer-bottom a { text-decoration: none; color: #888; }
+.footer-bottom a:hover { color: var(--fg); }
+
+/* ── COLLECTION DETAIL ── */
+.collection-header {
+  padding: 20px var(--pad) 0;
+}
+.back-btn {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 300;
+  margin-bottom: 12px;
+  display: inline-block;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: var(--fg); }
+.collection-title {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(22px, 4vw, 34px);   /* même format que la liste (nom + médium en ligne) */
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+.collection-subtitle {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+  color: #666;
+  margin-top: 10px;
+}
+.collection-count {
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  padding-bottom: 24px;
+}
+.collection-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #444;
+  padding: 0 0 32px;
+  text-align: justify;
+}
+
+.work-info {
+  padding: 14px 0 0;
+  margin-top: 0;
+}
+.work-title {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.work-dims {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.work-avail {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot.green { background: #2d8a4e; }
+.dot.gray { background: #bbb; }
+
+/* ── WORK DETAIL (enlarged view) ── */
+.work-large {
+  padding: 0 var(--pad) 48px;
+  text-align: center;
+}
+.work-large img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  width: auto;
+  max-height: 88vh;
+}
+.work-large .work-info {
+  display: inline-block;
+  text-align: left;
+  margin-top: 20px;
+}
+.work-large .work-avail { justify-content: flex-start; }
+
+/* ── ABOUT PAGE ── */
+.about-photo {
+  padding: 0 var(--pad);
+  margin-bottom: 32px;
+}
+.about-photo img {
+  display: block;
+  width: 100%;
+  max-width: 600px;   /* portrait — éviter une image démesurée sur desktop */
+  height: auto;
+}
+.about-content {
+  padding: 0 var(--pad) 48px;
+}
+.about-content p {
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 520px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+/* ── EXPOSITIONS PAGE ── */
+.expo-section-title {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(22px, 4.5vw, 30px);
+  letter-spacing: 0.01em;
+  padding: 0 var(--pad);
+  margin-bottom: 16px;
+  color: #555;
+}
+.expo-list {
+  padding: 0 var(--pad) 40px;
+}
+.expo-item {
+  border-top: 1px solid #ddd;
+  padding: 20px 0;
+}
+.expo-item:last-child { border-bottom: 1px solid #ddd; }
+.expo-name {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.expo-venue {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 2px;
+}
+.expo-dates {
+  font-size: 12px;
+  color: #999;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.expo-desc {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  max-width: 420px;
+}
+
+/* ── CONTACT PAGE ── */
+.contact-content {
+  padding: 0 var(--pad) 64px;
+}
+.contact-content p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #444;
+  margin-bottom: 12px;
+}
+.contact-content a {
+  text-underline-offset: 3px;
+}
+
+/* ── PAGE TITLES ── */
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(40px, 10vw, 84px);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  padding: 0 var(--pad) 24px;
+}
+
+/* ── HR ── */
+.sep {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 40px var(--pad);
+}
+</style>
+</head>
+<body>
+
+<!-- ════ NAVBAR ════ -->
+<nav class="navbar">
+  <button class="navbar-logo" onclick="navigateTo('home')" aria-label="Roland — Accueil">
+    <img src="img/Incliner%20le%20premier%20L%20(bas%20gauche).png" alt="ROLL">
+  </button>
+  <div class="navbar-lang">
+    <span class="active" onclick="setLang(this)">FR</span>
+    <span>|</span>
+    <span onclick="setLang(this)">EN</span>
+    <span>|</span>
+    <span onclick="setLang(this)">DE</span>
+  </div>
+  <ul class="navbar-links">
+    <li><a onclick="navigateTo('about')" data-i18n="menu_about">Roland Blindenberg</a></li>
+    <li><a onclick="goToCollectionList()" data-i18n="menu_collection">Collection</a></li>
+    <li><a onclick="navigateTo('expositions')" data-i18n="menu_expositions">Expositions</a></li>
+    <li><a onclick="navigateTo('contact')">Contact</a></li>
+  </ul>
+  <button class="navbar-menu-btn" onclick="openMenu()">Menu</button>
+</nav>
+
+<!-- ════ MENU OVERLAY ════ -->
+<div class="menu-overlay" id="menuOverlay">
+  <button class="menu-close" onclick="closeMenu()" data-i18n="menu_close">Fermer</button>
+  <ul class="menu-links">
+    <li><a href="#" onclick="menuNav('about')" data-i18n="menu_about">Roland Blindenberg</a></li>
+    <li><a href="#" onclick="menuNav('collection-list')" data-i18n="menu_collection">Collection</a></li>
+    <li class="menu-sub"><a href="#" onclick="menuShowColl('ensemble')" data-i18n="menu_ensemble">Série "ENSEMBLE" Abstraction figurative.</a></li>
+    <li class="menu-sub"><a href="#" onclick="menuShowColl('trajectoire')" data-i18n="menu_instant">"INSTANT" fusain.</a></li>
+    <li class="menu-sub"><a href="#" onclick="menuShowColl('corps')" data-i18n="menu_corps">Autres séries.</a></li>
+    <li><a href="#" onclick="menuNav('expositions')" data-i18n="menu_expositions">Expositions</a></li>
+    <li><a href="#" onclick="menuNav('contact')">Contact</a></li>
+  </ul>
+  <div class="menu-bottom">
+    <a href="https://www.instagram.com/rolandblindenberg?igsh=MTAxcmRjN29ha2R4aA%3D%3D" target="_blank" rel="noopener">Instagram</a>
+    <span>Roland &copy; 2026</span>
+  </div>
+</div>
+
+<!-- ════ HOME PAGE ════ -->
+<div class="page active" id="home">
+
+  <!-- Hero painting (cropped to invite scroll) -->
+  <div class="painting-hero">
+    <img src="img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(1).jpeg" alt="Roland — Ensemble">
+  </div>
+
+  <!-- Collections -->
+  <div class="section-label" id="collections" data-i18n="section_collections">Collections</div>
+
+  <div class="collection-row" onclick="openCollection('ensemble')">
+    <div class="collection-row-left">
+      <span class="collection-row-name" data-i18n="coll_ensemble_title">Série "ENSEMBLE" <span class="cr-medium">Abstraction figurative.</span></span>
+    </div>
+    <div class="collection-row-right" data-i18n="row_ensemble_count">11 œuvres <span class="arrow">→</span></div>
+  </div>
+  <div class="collection-row" onclick="openCollection('trajectoire')">
+    <div class="collection-row-left">
+      <span class="collection-row-name" data-i18n="coll_trajectoire_title">"INSTANT" fusain.</span>
+    </div>
+    <div class="collection-row-right" data-i18n="row_trajectoire_count">9 œuvres <span class="arrow">→</span></div>
+  </div>
+  <div class="collection-row" onclick="openCollection('corps')">
+    <div class="collection-row-left">
+      <span class="collection-row-name" data-i18n="coll_corps_title">Autres séries.</span>
+    </div>
+    <div class="collection-row-right" data-i18n="row_corps_count">3 œuvres <span class="arrow">→</span></div>
+  </div>
+
+  <!-- Featured works teaser (flexible gallery row) -->
+  <div class="gallery-row" style="margin-top:64px;">
+    <div class="gallery-item">
+      <img src="img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0736.jpg" alt="Roland — Trajectoire">
+    </div>
+    <div class="gallery-item">
+      <img src="img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0717.jpg" alt="Roland — Ensemble">
+    </div>
+  </div>
+
+  <!-- Dark block (expositions teaser) -->
+  <div class="dark-block">
+    <div class="dark-block-bg" data-i18n="menu_expositions">Expositions</div>
+    <a class="dark-block-link" onclick="navigateTo('expositions')" data-i18n="expo_teaser_link">Voir les expositions →</a>
+  </div>
+
+  <!-- Contact teaser -->
+  <div class="contact-teaser">
+    <p class="contact-teaser-phrase" data-i18n="contact_phrase">Prenons contact.</p>
+    <a href="mailto:atelier.rb@gmail.com">atelier.rb@gmail.com</a>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer" data-footer></footer>
+</div>
+
+<!-- ════ COLLECTION LIST PAGE (page dédiée, accessible depuis le menu « Collection ») ════ -->
+<div class="page" id="collection-list">
+  <div class="collection-header">
+    <button class="back-btn" onclick="navigateTo('home')" data-i18n="back_retour">← Retour</button>
+    <div class="page-title" data-i18n="menu_collection">Collection</div>
+  </div>
+
+  <div class="collection-row" onclick="openCollectionFromList('ensemble')">
+    <div class="collection-row-left">
+      <span class="collection-row-name" data-i18n="coll_ensemble_title">Série "ENSEMBLE" <span class="cr-medium">Abstraction figurative.</span></span>
+    </div>
+    <div class="collection-row-right" data-i18n="row_ensemble_count">11 œuvres <span class="arrow">→</span></div>
+  </div>
+  <div class="collection-row" onclick="openCollectionFromList('trajectoire')">
+    <div class="collection-row-left">
+      <span class="collection-row-name" data-i18n="coll_trajectoire_title">"INSTANT" fusain.</span>
+    </div>
+    <div class="collection-row-right" data-i18n="row_trajectoire_count">9 œuvres <span class="arrow">→</span></div>
+  </div>
+  <div class="collection-row" onclick="openCollectionFromList('corps')">
+    <div class="collection-row-left">
+      <span class="collection-row-name" data-i18n="coll_corps_title">Autres séries.</span>
+    </div>
+    <div class="collection-row-right" data-i18n="row_corps_count">3 œuvres <span class="arrow">→</span></div>
+  </div>
+
+  <footer class="site-footer" data-footer></footer>
+</div>
+
+<!-- ════ COLLECTION DETAIL PAGE ════ -->
+<div class="page" id="collection-detail">
+  <div class="collection-header">
+    <button class="back-btn" onclick="backToCollections()" data-i18n="back_collections">← Collections</button>
+    <div class="collection-title" id="collTitle"></div>
+    <div class="collection-subtitle" id="collSubtitle"></div>
+    <div class="collection-count" id="collCount"></div>
+    <div class="collection-desc" id="collDesc"></div>
+  </div>
+  <div id="collWorks"></div>
+  <footer class="site-footer" data-footer></footer>
+</div>
+
+<!-- ════ WORK DETAIL PAGE (enlarged) ════ -->
+<div class="page" id="work-detail">
+  <div class="collection-header">
+    <button class="back-btn" id="workBackBtn" data-i18n="back_retour">← Retour</button>
+  </div>
+  <div class="work-large" id="workDetailBody"></div>
+  <footer class="site-footer" data-footer></footer>
+</div>
+
+<!-- ════ ABOUT PAGE ════ -->
+<div class="page" id="about">
+  <div class="collection-header">
+    <button class="back-btn" onclick="navigateTo('home')" data-i18n="back_retour">← Retour</button>
+    <div class="page-title" data-i18n="page_about">Roland Blindenberg</div>
+  </div>
+  <div class="about-photo">
+    <img src="img/roland-atelier.jpg" alt="Roland dans son atelier">
+  </div>
+  <div class="about-content">
+    <p data-i18n="about_p1">Comme souvent, peindre et dessiner sont depuis l'enfance un jeu et un moyen spontané, naturel, évident de représenter les choses, mais aussi d'exprimer des ressentis, des émotions.</p>
+    <p data-i18n="about_p2">Après avoir fréquenté les ateliers de peinture et de dessin dans différentes écoles d'art à Bruxelles, il comprend petit à petit ce que signifie donner une existence physique à la pensée, et aussi le sens de la quête (infinie) d'un alphabet pictural entre ligne, surface et couleur. (L'éternelle question…)</p>
+    <p data-i18n="about_p3">L'existence propre d'une ligne, celle d'une couleur comme véritable objet du tableau, plutôt que « l'imitation » de quoi que ce soit.</p>
+    <p data-i18n="about_p4">Né à Bruxelles, il y fréquente les ateliers de l'ACA, du CAD, et durant trois ans la Roc Académie. Il est diplômé de l'École des Arts de la Ville de Bruxelles.</p>
+    <p data-i18n="about_p5">Mon travail pictural s'inscrit dans un espace de tension entre image et pensée.</p>
+    <p data-i18n="about_p6">La figure y est envisagée non comme sujet de représentation, mais comme opérateur conceptuel. Les peintures interrogent les mécanismes de reconnaissance visuelle qui précèdent l'interprétation consciente. Chaque image est construite à partir d'un protocole volontairement simple, parfois contraint. La composition agit comme un dispositif perceptif plutôt que comme une structure narrative. La figure humaine y est fragmentée, déplacée ou suspendue, générant une instabilité du regard. Entre présence et abstraction, la peinture ralentit la lecture de l'image. Le spectateur est ainsi invité à reconsidérer ses modes de perception. La peinture devient alors un acte de perception critique.</p>
+  </div>
+  <footer class="site-footer" data-footer></footer>
+</div>
+
+<!-- ════ EXPOSITIONS PAGE ════ -->
+<div class="page" id="expositions">
+  <div class="collection-header">
+    <button class="back-btn" onclick="navigateTo('home')" data-i18n="back_retour">← Retour</button>
+    <div class="page-title" data-i18n="menu_expositions">Expositions</div>
+  </div>
+
+  <div class="expo-list">
+    <div class="expo-item">
+      <div class="expo-name" data-i18n="expo_bxl_name">Bruxelles</div>
+      <div class="expo-dates" data-i18n="expo_bxl_years">2014 · 2016 · 2017 · 2019 · 2020 · 2022 · 2023</div>
+    </div>
+    <div class="expo-item">
+      <div class="expo-name" data-i18n="expo_narbonne_name">Narbonne</div>
+      <div class="expo-venue" data-i18n="expo_narbonne_place">Sud de la France</div>
+      <div class="expo-dates" data-i18n="expo_narbonne_years">2019 · 2021 · 2022 · 2023 · 2024 · 2025</div>
+    </div>
+    <div class="expo-item">
+      <div class="expo-name" data-i18n="expo_region_name">En région</div>
+      <div class="expo-venue" data-i18n="expo_region_places">Cuxac · Ouveillan · Montredon · La Palme</div>
+    </div>
+  </div>
+
+  <footer class="site-footer" data-footer></footer>
+</div>
+
+<!-- ════ CONTACT PAGE ════ -->
+<div class="page" id="contact">
+  <div class="collection-header">
+    <button class="back-btn" onclick="navigateTo('home')" data-i18n="back_retour">← Retour</button>
+    <div class="page-title">Contact</div>
+  </div>
+  <div class="contact-content">
+    <p><a href="mailto:atelier.rb@gmail.com">atelier.rb@gmail.com</a></p>
+    <p data-i18n="contact_location">Genève, Suisse</p>
+    <p><a href="https://www.instagram.com/rolandblindenberg?igsh=MTAxcmRjN29ha2R4aA%3D%3D" target="_blank" rel="noopener">Instagram</a></p>
+    <br>
+    <p data-i18n="contact_text">Pour toute demande d'acquisition, de prêt ou d'exposition, n'hésitez pas à écrire. Je réponds personnellement à chaque message.</p>
+  </div>
+  <footer class="site-footer" data-footer></footer>
+</div>
+
+<script>
+// ── Translations ──
+var currentLang = 'FR';
+
+var i18n = {
+  FR: {
+    // Menu
+    menu_close: 'Fermer',
+    menu_about: 'Roland Blindenberg',
+    menu_collection: 'Collection',
+    menu_corps: 'Autres séries.',
+    menu_ensemble: 'Série "ENSEMBLE" Abstraction figurative.',
+    menu_instant: '"INSTANT" fusain.',
+    menu_expositions: 'Expositions',
+    // Display text
+    display_phrase: 'La couleur est un langage universel.',
+    tagline: 'Chaque toile est un espace de rencontre entre la forme et l\u2019émotion.',
+    // Home
+    section_collections: 'Collections',
+    row_ensemble_count: '11 œuvres <span class="arrow">→</span>',
+    row_trajectoire_count: '9 œuvres <span class="arrow">→</span>',
+    row_corps_count: '3 œuvres <span class="arrow">→</span>',
+    coll_corps_title: 'Autres séries.',
+    coll_ensemble_title: 'Série "ENSEMBLE" <span class="cr-medium">Abstraction figurative.</span>',
+    coll_ensemble_medium: 'Abstraction figurative',
+    coll_trajectoire_title: '"INSTANT" fusain.',
+    coll_trajectoire_medium: 'fusain',
+    expo_teaser_link: 'Voir les expositions →',
+    contact_phrase: 'Prenons contact.',
+    footer_label: 'Roland — Peintre',
+    // Navigation
+    back_collections: '← Collections',
+    back_retour: '← Retour',
+    // About
+    page_about: 'Roland Blindenberg',
+    about_p1: 'Comme souvent, peindre et dessiner sont depuis l’enfance un jeu et un moyen spontané, naturel, évident de représenter les choses, mais aussi d’exprimer des ressentis, des émotions.',
+    about_p3: 'L’existence propre d’une ligne, celle d’une couleur comme véritable objet du tableau, plutôt que « l’imitation » de quoi que ce soit.',
+    about_p4: 'Né à Bruxelles, il y fréquente les ateliers de l’ACA, du CAD, et durant trois ans la Roc Académie. Il est diplômé de l’École des Arts de la Ville de Bruxelles.',
+    about_p5: 'Mon travail pictural s’inscrit dans un espace de tension entre image et pensée.',
+    about_p6: 'La figure y est envisagée non comme sujet de représentation, mais comme opérateur conceptuel. Les peintures interrogent les mécanismes de reconnaissance visuelle qui précèdent l’interprétation consciente. Chaque image est construite à partir d’un protocole volontairement simple, parfois contraint. La composition agit comme un dispositif perceptif plutôt que comme une structure narrative. La figure humaine y est fragmentée, déplacée ou suspendue, générant une instabilité du regard. Entre présence et abstraction, la peinture ralentit la lecture de l’image. Le spectateur est ainsi invité à reconsidérer ses modes de perception. La peinture devient alors un acte de perception critique.',
+    about_p2: 'Après avoir fréquenté les ateliers de peinture et de dessin dans différentes écoles d\u2019art à Bruxelles, il comprend petit à petit ce que signifie donner une existence physique à la pensée, et aussi le sens de la quête (infinie) d\u2019un alphabet pictural entre ligne, surface et couleur. (L\u2019éternelle question…)',
+    // Expositions
+    expo_bxl_name: 'Bruxelles',
+    expo_bxl_years: '2014 · 2016 · 2017 · 2019 · 2020 · 2022 · 2023',
+    expo_narbonne_name: 'Narbonne',
+    expo_narbonne_place: 'Sud de la France',
+    expo_narbonne_years: '2019 · 2021 · 2022 · 2023 · 2024 · 2025',
+    expo_region_name: 'En région',
+    expo_region_places: 'Cuxac · Ouveillan · Montredon · La Palme',
+    // Contact
+    contact_location: 'Genève, Suisse',
+    contact_text: 'Pour toute demande d\u2019acquisition, de prêt ou d\u2019exposition, n\u2019hésitez pas à écrire. Je réponds personnellement à chaque message.',
+    // Collection detail
+    avail_yes: 'Disponible sur demande',
+    avail_no: 'Non disponible',
+    // Footer
+    footer_contact: 'Contact',
+    footer_social: 'Suivre'
+  },
+  EN: {
+    menu_close: 'Close',
+    menu_about: 'Roland Blindenberg',
+    menu_collection: 'Collection',
+    menu_corps: 'Other series.',
+    menu_ensemble: 'Series "ENSEMBLE" Figurative abstraction.',
+    menu_instant: '"INSTANT" charcoal.',
+    menu_expositions: 'Exhibitions',
+    display_phrase: 'Colour is a universal language.',
+    tagline: 'Each canvas is a meeting point between form and emotion.',
+    section_collections: 'Collections',
+    row_ensemble_count: '11 works <span class="arrow">→</span>',
+    row_trajectoire_count: '9 works <span class="arrow">→</span>',
+    row_corps_count: '3 works <span class="arrow">→</span>',
+    coll_corps_title: 'Other series.',
+    coll_ensemble_title: 'Series "ENSEMBLE" <span class="cr-medium">Figurative abstraction.</span>',
+    coll_ensemble_medium: 'Figurative abstraction',
+    coll_trajectoire_title: '"INSTANT" charcoal.',
+    coll_trajectoire_medium: 'Charcoal',
+    expo_teaser_link: 'View exhibitions →',
+    contact_phrase: 'Get in touch.',
+    footer_label: 'Roland — Painter',
+    back_collections: '← Collections',
+    back_retour: '← Back',
+    page_about: 'Roland Blindenberg',
+    about_p1: 'As is often the case, painting and drawing have, since childhood, been a game and a spontaneous, natural, self-evident way of representing things — but also of expressing feelings and emotions.',
+    about_p2: 'After attending painting and drawing studios in various art schools in Brussels, he gradually came to understand what it means to give physical existence to thought, as well as the sense of the (endless) quest for a pictorial alphabet between line, surface and colour. (The eternal question…)',
+    about_p3: 'The existence of a line in its own right, that of a colour as the true subject of the painting, rather than the “imitation” of anything at all.',
+    about_p4: 'Born in Brussels, he attended the studios of the ACA and the CAD, and for three years the Roc Académie. He is a graduate of the École des Arts de la Ville de Bruxelles.',
+    about_p5: 'My pictorial work unfolds within a space of tension between image and thought.',
+    about_p6: 'The figure is approached not as a subject of representation, but as a conceptual operator. The paintings question the mechanisms of visual recognition that precede conscious interpretation. Each image is built from a deliberately simple, sometimes constrained protocol. The composition acts as a perceptual device rather than a narrative structure. The human figure is fragmented, displaced or suspended, generating an instability of the gaze. Between presence and abstraction, the painting slows down the reading of the image. The viewer is thus invited to reconsider their modes of perception. Painting then becomes an act of critical perception.',
+    expo_bxl_name: 'Brussels',
+    expo_bxl_years: '2014 · 2016 · 2017 · 2019 · 2020 · 2022 · 2023',
+    expo_narbonne_name: 'Narbonne',
+    expo_narbonne_place: 'South of France',
+    expo_narbonne_years: '2019 · 2021 · 2022 · 2023 · 2024 · 2025',
+    expo_region_name: 'In the region',
+    expo_region_places: 'Cuxac · Ouveillan · Montredon · La Palme',
+    contact_location: 'Geneva, Switzerland',
+    contact_text: 'For any enquiry regarding acquisition, loan or exhibition, please do not hesitate to write. I personally respond to every message.',
+    avail_yes: 'Available on request',
+    avail_no: 'Not available',
+    footer_contact: 'Contact',
+    footer_social: 'Stay in touch'
+  },
+  DE: {
+    menu_close: 'Schliessen',
+    menu_about: 'Roland Blindenberg',
+    menu_collection: 'Kollektion',
+    menu_corps: 'Weitere Serien.',
+    menu_ensemble: 'Serie "ENSEMBLE" Figurative Abstraktion.',
+    menu_instant: '"INSTANT" Kohle.',
+    menu_expositions: 'Ausstellungen',
+    display_phrase: 'Farbe ist eine universelle Sprache.',
+    tagline: 'Jede Leinwand ist ein Begegnungsraum zwischen Form und Emotion.',
+    section_collections: 'Kollektionen',
+    row_ensemble_count: '11 Werke <span class="arrow">→</span>',
+    row_trajectoire_count: '9 Werke <span class="arrow">→</span>',
+    row_corps_count: '3 Werke <span class="arrow">→</span>',
+    coll_corps_title: 'Weitere Serien.',
+    coll_ensemble_title: 'Serie "ENSEMBLE" <span class="cr-medium">Figurative Abstraktion.</span>',
+    coll_ensemble_medium: 'Figurative Abstraktion',
+    coll_trajectoire_title: '"INSTANT" Kohle.',
+    coll_trajectoire_medium: 'Kohle',
+    expo_teaser_link: 'Ausstellungen ansehen →',
+    contact_phrase: 'Kontakt aufnehmen.',
+    footer_label: 'Roland — Maler',
+    back_collections: '← Kollektionen',
+    back_retour: '← Zurück',
+    page_about: 'Roland Blindenberg',
+    about_p1: 'Wie so oft sind Malen und Zeichnen seit der Kindheit ein Spiel und ein spontanes, natürliches, selbstverständliches Mittel, um Dinge darzustellen, aber auch um Empfindungen und Emotionen auszudrücken.',
+    about_p2: 'Nachdem er die Mal- und Zeichenateliers verschiedener Kunstschulen in Brüssel besucht hatte, begriff er nach und nach, was es bedeutet, dem Gedanken eine physische Existenz zu geben — und den Sinn der (unendlichen) Suche nach einem bildnerischen Alphabet zwischen Linie, Fläche und Farbe. (Die ewige Frage…)',
+    about_p3: 'Die eigenständige Existenz einer Linie, die einer Farbe als eigentlicher Gegenstand des Bildes, statt der „Nachahmung“ von irgendetwas.',
+    about_p4: 'In Brüssel geboren, besuchte er dort die Ateliers der ACA und des CAD sowie drei Jahre lang die Roc Académie. Er ist Absolvent der École des Arts de la Ville de Bruxelles.',
+    about_p5: 'Meine malerische Arbeit bewegt sich in einem Spannungsraum zwischen Bild und Gedanke.',
+    about_p6: 'Die Figur wird nicht als Gegenstand der Darstellung verstanden, sondern als konzeptueller Operator. Die Bilder befragen die Mechanismen der visuellen Wahrnehmung, die der bewussten Deutung vorausgehen. Jedes Bild entsteht aus einem bewusst einfachen, mitunter eingeschränkten Protokoll. Die Komposition wirkt als Wahrnehmungsdispositiv und nicht als narrative Struktur. Die menschliche Figur ist fragmentiert, verschoben oder suspendiert und erzeugt eine Instabilität des Blicks. Zwischen Präsenz und Abstraktion verlangsamt die Malerei das Lesen des Bildes. Der Betrachter ist so eingeladen, seine Wahrnehmungsweisen zu überdenken. Die Malerei wird damit zu einem Akt kritischer Wahrnehmung.',
+    expo_bxl_name: 'Brüssel',
+    expo_bxl_years: '2014 · 2016 · 2017 · 2019 · 2020 · 2022 · 2023',
+    expo_narbonne_name: 'Narbonne',
+    expo_narbonne_place: 'Südfrankreich',
+    expo_narbonne_years: '2019 · 2021 · 2022 · 2023 · 2024 · 2025',
+    expo_region_name: 'In der Region',
+    expo_region_places: 'Cuxac · Ouveillan · Montredon · La Palme',
+    contact_location: 'Genf, Schweiz',
+    contact_text: 'Für Anfragen zu Erwerb, Leihgabe oder Ausstellung zögern Sie nicht zu schreiben. Ich beantworte jede Nachricht persönlich.',
+    avail_yes: 'Auf Anfrage verfügbar',
+    avail_no: 'Nicht verfügbar',
+    footer_contact: 'Kontakt',
+    footer_social: 'Folgen'
+  }
+};
+
+// ── Collection data (per language) ──
+var collectionsData = {
+  FR: {
+    ensemble: {
+      title: 'ENSEMBLE', medium: 'Abstraction figurative', count: 11,
+      desc: 'Les surfaces colorées composent un espace lumineux. Des silhouettes se confondent, ne forment qu’un. Ensemble, libres dans l’espace apaisé… Enfin.',
+      works: [
+        { title: 'Ensemble nº1', dims: '100 × 130 cm — Huile sur toile', desc: 'Deux silhouettes assises sur un fond de ciel rose et de prairie verte. Les couleurs vives découpent les corps comme des vitraux.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24.jpeg' },
+        { title: 'Ensemble nº2', dims: '120 × 120 cm — Huile sur toile', desc: 'Cinq figures rassemblées sous un ciel bleu. Les masses colorées s\u2019imbriquent, créant un jeu de superpositions et de transparences.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(1).jpeg' },
+        { title: 'Ensemble nº3', dims: '80 × 110 cm — Huile sur toile', desc: 'Silhouettes sur un banc, traitées en aplats beiges sur fond de bandes horizontales vives. La scène quotidienne devient abstraite.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(2).jpeg' },
+        { title: 'Ensemble nº4', dims: '100 × 140 cm — Huile sur toile', desc: 'Trois figures sur fond rouge et violet. Le geste est plus libre, la matière plus épaisse. Signé ROLL.', avail: false, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.25.jpeg' },
+        { title: 'Ensemble nº5', dims: '120 × 120 cm — Huile sur toile', desc: 'Trois corps entrelacés sur fond rose vif et vert. Le jaune, le bleu et le rose se superposent dans une étreinte chromatique.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0717.jpg' },
+        { title: 'Ensemble nº6', dims: '100 × 130 cm — Huile sur toile', desc: 'Trois silhouettes assises, ciel rose et prairie verte. Les couleurs — orange, bleu, violet — s’enchevêtrent avec vivacité.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0723.jpg' },
+        { title: 'Ensemble nº7', dims: '100 × 130 cm — Huile sur toile', desc: 'Cinq figures debout sur fond bleu et violet. La figure centrale s’impose, les corps colorés forment un cercle protecteur.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0836.jpg' },
+        { title: 'Ensemble nº8', dims: '100 × 140 cm — Huile sur toile', desc: 'Figures assises sur fond rouge-orangé et violet. Les masses de couleur — vert, jaune, bleu — créent une densité presque sculpturale.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0837.jpg' },
+        { title: 'Ensemble nº9', dims: '100 × 140 cm — Huile sur toile', desc: 'Deux figures enlacées sous un ciel bleu. Le jaune, le vert et le violet dialoguent dans un moment de complicité.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0838.jpg' },
+        { title: 'Ensemble nº10', dims: '80 × 100 cm — Huile sur toile', desc: 'Figures allongées, composition horizontale. Le ciel bleu et le sol rose encadrent des corps en repos, baignés de couleur.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0839.jpg' },
+        { title: 'Ensemble nº11', dims: '100 × 130 cm — Huile sur toile', desc: 'Vue plongeante sur des figures enchevêtrées. Le vert vif et l’orange créent une énergie tourbillonnante. Signé ROLL.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0841.jpg' }
+      ]
+    },
+    trajectoire: {
+      title: 'INSTANT', medium: 'fusain', count: 9,
+      desc: 'Un modèle, un fusain… Quelques lignes… Avant pas encore, après jamais plus… Liberté, intuition, création… En équilibre sur le point de l’instant. Ce minuscule printemps qui ne sera jamais qu’une fois. — cf. Vladimir Jankélévitch',
+      works: [
+        { title: 'Trajectoire nº1', dims: '65 × 90 cm — Fusain sur papier', desc: 'Figures enchevêtrées dans un réseau de traits noirs. Le fusain compressé donne une densité presque sculpturale au dessin.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32.jpeg' },
+        { title: 'Trajectoire nº2', dims: '50 × 70 cm — Encre sur papier', desc: 'Deux figures esquissées d\u2019un trait continu. La ligne ne se ferme jamais, elle rebondit d\u2019un corps à l\u2019autre.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32%20(1).jpeg' },
+        { title: 'Trajectoire nº3', dims: '65 × 90 cm — Sanguine sur papier', desc: 'Groupe de figures à la sanguine. Le rouge terreux du pigment donne une chaleur organique à l\u2019enchevêtrement des corps.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32%20(2).jpeg' }
+      ,
+        { title: 'Trajectoire nº4', dims: '50 × 65 cm — Fusain sur papier', desc: 'Figure assise, trait fin et délicat. Le fusain effleure le papier, capturant l’intimité d’un moment de repos.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0832.jpg' },
+        { title: 'Trajectoire nº5', dims: '50 × 70 cm — Fusain sur papier', desc: 'Figure recroquevillée, dessinée d’un trait continu. La signature ROLL ancre la composition dans le coin inférieur.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0833.jpg' },
+        { title: 'Trajectoire nº6', dims: '65 × 90 cm — Sanguine sur papier', desc: 'Trois figures enlacées à la sanguine. Le pigment rouge terreux traduit la chaleur des corps imbriqués.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0834.jpg' },
+        { title: 'Trajectoire nº7', dims: '65 × 85 cm — Fusain sur papier', desc: 'Figure masculine, bras levés. Le fusain appuyé donne une force expressive au mouvement ascendant du corps.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0734.jpg' },
+        { title: 'Trajectoire nº8', dims: '50 × 70 cm — Fusain sur papier', desc: 'Figure allongée, le visage entre les mains. Le trait délicat traduit un moment d’abandon et de rêverie.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0735.jpg' },
+        { title: 'Trajectoire nº9', dims: '65 × 85 cm — Fusain sur papier', desc: 'Groupe dense de figures enchevêtrées. Le fusain compressé crée une masse sculpturale, presque monumentale.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0736.jpg' }]
+    },
+    corps: {
+      title: 'Autres séries', medium: '', count: 3,
+      desc: '',
+      works: [
+        { title: 'Corps à corps nº1', dims: '80 × 120 cm — Huile sur toile', desc: 'Deux corps enlacés, traités en grisaille. Les mains et les bras structurent la composition dans un mouvement d\u2019étreinte.', avail: true, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.25.jpeg' },
+        { title: 'Corps à corps nº2', dims: '100 × 140 cm — Huile sur toile', desc: 'Un couple en gros plan. La lumière sculpte les volumes avec une intensité presque photographique, mais le grain de la peinture reste visible.', avail: false, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.25%20(1).jpeg' },
+        { title: 'Corps à corps nº3', dims: '80 × 120 cm — Huile sur toile', desc: 'Figure masculine en grisaille. Le regard direct, les mains puissantes. La matière picturale traduit la présence physique.', avail: true, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.26.jpeg' }
+      ]
+    }
+  },
+  EN: {
+    ensemble: {
+      title: 'ENSEMBLE', medium: 'Figurative abstraction', count: 11,
+      desc: 'Coloured surfaces compose a luminous space. Silhouettes merge, becoming one. Together, free in the stillness of space… At last.',
+      works: [
+        { title: 'Ensemble nº1', dims: '100 × 130 cm — Oil on canvas', desc: 'Two seated silhouettes against a pink sky and green meadow. Vivid colours carve the bodies like stained glass.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24.jpeg' },
+        { title: 'Ensemble nº2', dims: '120 × 120 cm — Oil on canvas', desc: 'Five figures gathered under a blue sky. Coloured masses interlock, creating a play of overlays and transparencies.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(1).jpeg' },
+        { title: 'Ensemble nº3', dims: '80 × 110 cm — Oil on canvas', desc: 'Silhouettes on a bench, rendered in beige flat tones against vivid horizontal bands. The everyday scene becomes abstract.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(2).jpeg' },
+        { title: 'Ensemble nº4', dims: '100 × 140 cm — Oil on canvas', desc: 'Three figures against a red and purple background. The gesture is freer, the material thicker. Signed ROLL.', avail: false, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.25.jpeg' },
+        { title: 'Ensemble nº5', dims: '120 × 120 cm — Oil on canvas', desc: 'Three intertwined bodies against vivid pink and green. Yellow, blue and pink overlap in a chromatic embrace.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0717.jpg' },
+        { title: 'Ensemble nº6', dims: '100 × 130 cm — Oil on canvas', desc: 'Three seated silhouettes, pink sky and green meadow. Orange, blue and violet interweave with vivacity.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0723.jpg' },
+        { title: 'Ensemble nº7', dims: '100 × 130 cm — Oil on canvas', desc: 'Five standing figures against blue and violet. The central figure asserts itself, coloured bodies form a protective circle.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0836.jpg' },
+        { title: 'Ensemble nº8', dims: '100 × 140 cm — Oil on canvas', desc: 'Seated figures against red-orange and violet. Masses of green, yellow and blue create an almost sculptural density.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0837.jpg' },
+        { title: 'Ensemble nº9', dims: '100 × 140 cm — Oil on canvas', desc: 'Two figures entwined under a blue sky. Yellow, green and violet converse in a moment of complicity.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0838.jpg' },
+        { title: 'Ensemble nº10', dims: '80 × 100 cm — Oil on canvas', desc: 'Reclining figures, horizontal composition. Blue sky and pink ground frame bodies at rest, bathed in colour.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0839.jpg' },
+        { title: 'Ensemble nº11', dims: '100 × 130 cm — Oil on canvas', desc: 'Bird\'s-eye view of entangled figures. Vivid green and orange create a swirling energy. Signed ROLL.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0841.jpg' }
+      ]
+    },
+    trajectoire: {
+      title: 'INSTANT', medium: 'Charcoal', count: 9,
+      desc: 'A model, a stick of charcoal… A few lines… Not yet before, never again after… Freedom, intuition, creation… Balanced on the point of the instant. This tiny spring that will only ever be, once. — after Vladimir Jankélévitch',
+      works: [
+        { title: 'Trajectoire nº1', dims: '65 × 90 cm — Charcoal on paper', desc: 'Figures entangled in a network of black strokes. Compressed charcoal gives an almost sculptural density to the drawing.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32.jpeg' },
+        { title: 'Trajectoire nº2', dims: '50 × 70 cm — Ink on paper', desc: 'Two figures sketched in a continuous line. The line never closes, it bounces from one body to another.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32%20(1).jpeg' },
+        { title: 'Trajectoire nº3', dims: '65 × 90 cm — Sanguine on paper', desc: 'Group of figures in sanguine. The earthy red of the pigment gives an organic warmth to the entanglement of bodies.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32%20(2).jpeg' },
+        { title: 'Trajectoire nº4', dims: '50 × 65 cm — Charcoal on paper', desc: 'Seated figure, fine and delicate strokes. The charcoal barely touches the paper, capturing the intimacy of a moment of rest.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0832.jpg' },
+        { title: 'Trajectoire nº5', dims: '50 × 70 cm — Charcoal on paper', desc: 'Curled-up figure drawn in a continuous line. The ROLL signature anchors the composition in the lower corner.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0833.jpg' },
+        { title: 'Trajectoire nº6', dims: '65 × 90 cm — Sanguine on paper', desc: 'Three entwined figures in sanguine. The earthy red pigment conveys the warmth of interlocking bodies.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0834.jpg' },
+        { title: 'Trajectoire nº7', dims: '65 × 85 cm — Charcoal on paper', desc: 'Male figure, arms raised. Bold charcoal gives expressive force to the ascending movement of the body.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0734.jpg' },
+        { title: 'Trajectoire nº8', dims: '50 × 70 cm — Charcoal on paper', desc: 'Reclining figure, face between the hands. Delicate strokes convey a moment of surrender and reverie.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0735.jpg' },
+        { title: 'Trajectoire nº9', dims: '65 × 85 cm — Charcoal on paper', desc: 'Dense group of entangled figures. Compressed charcoal creates a sculptural, almost monumental mass.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0736.jpg' }
+      ]
+    },
+    corps: {
+      title: 'Other series', medium: '', count: 3,
+      desc: '',
+      works: [
+        { title: 'Corps à corps nº1', dims: '80 × 120 cm — Oil on canvas', desc: 'Two entwined bodies in grisaille. Hands and arms structure the composition in an embracing movement.', avail: true, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.25.jpeg' },
+        { title: 'Corps à corps nº2', dims: '100 × 140 cm — Oil on canvas', desc: 'A couple in close-up. Light sculpts the volumes with almost photographic intensity, but the grain of the paint remains visible.', avail: false, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.25%20(1).jpeg' },
+        { title: 'Corps à corps nº3', dims: '80 × 120 cm — Oil on canvas', desc: 'Male figure in grisaille. The direct gaze, the powerful hands. The pictorial material conveys physical presence.', avail: true, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.26.jpeg' }
+      ]
+    }
+  },
+  DE: {
+    ensemble: {
+      title: 'ENSEMBLE', medium: 'Figurative Abstraktion', count: 4,
+      desc: 'Farbige Flächen bilden einen leuchtenden Raum. Silhouetten verschmelzen, werden eins. Gemeinsam, frei im befriedeten Raum… Endlich.',
+      works: [
+        { title: 'Ensemble nº1', dims: '100 × 130 cm — Öl auf Leinwand', desc: 'Zwei sitzende Silhouetten vor rosa Himmel und grüner Wiese. Lebhafte Farben schneiden die Körper wie Buntglas.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24.jpeg' },
+        { title: 'Ensemble nº2', dims: '120 × 120 cm — Öl auf Leinwand', desc: 'Fünf Figuren unter blauem Himmel versammelt. Farbige Massen greifen ineinander und schaffen ein Spiel aus Überlagerungen und Transparenzen.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(1).jpeg' },
+        { title: 'Ensemble nº3', dims: '80 × 110 cm — Öl auf Leinwand', desc: 'Silhouetten auf einer Bank, in beigen Flachtönen gegen lebhafte horizontale Streifen dargestellt. Die Alltagsszene wird abstrakt.', avail: true, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.24%20(2).jpeg' },
+        { title: 'Ensemble nº4', dims: '100 × 140 cm — Öl auf Leinwand', desc: 'Drei Figuren vor rotem und violettem Hintergrund. Die Geste ist freier, das Material dicker. Signiert ROLL.', avail: false, img: 'img/Ensemble%20Image%202026-04-05%20at%2019.17.25.jpeg' },
+        { title: 'Ensemble nº5', dims: '120 × 120 cm — Öl auf Leinwand', desc: 'Drei verschlungene Körper vor leuchtendem Rosa und Grün. Gelb, Blau und Rosa überlagern sich in einer chromatischen Umarmung.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0717.jpg' },
+        { title: 'Ensemble nº6', dims: '100 × 130 cm — Öl auf Leinwand', desc: 'Drei sitzende Silhouetten, rosa Himmel und grüne Wiese. Orange, Blau und Violett verflechten sich mit Lebhaftigkeit.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0723.jpg' },
+        { title: 'Ensemble nº7', dims: '100 × 130 cm — Öl auf Leinwand', desc: 'Fünf stehende Figuren vor blauem und violettem Hintergrund. Die zentrale Figur behauptet sich, farbige Körper bilden einen schützenden Kreis.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0836.jpg' },
+        { title: 'Ensemble nº8', dims: '100 × 140 cm — Öl auf Leinwand', desc: 'Sitzende Figuren vor Rot-Orange und Violett. Massen aus Grün, Gelb und Blau schaffen eine fast skulpturale Dichte.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0837.jpg' },
+        { title: 'Ensemble nº9', dims: '100 × 140 cm — Öl auf Leinwand', desc: 'Zwei umschlungene Figuren unter blauem Himmel. Gelb, Grün und Violett dialogieren in einem Moment der Komplizenschaft.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0838.jpg' },
+        { title: 'Ensemble nº10', dims: '80 × 100 cm — Öl auf Leinwand', desc: 'Liegende Figuren, horizontale Komposition. Blauer Himmel und rosa Boden rahmen ruhende, in Farbe getauchte Körper.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0839.jpg' },
+        { title: 'Ensemble nº11', dims: '100 × 130 cm — Öl auf Leinwand', desc: 'Vogelperspektive auf verschlungene Figuren. Leuchtendes Grün und Orange erzeugen eine wirbelnde Energie. Signiert ROLL.', avail: true, img: 'img/wetransfer_2026-0836-jpg_2026-06-01_1240/2026-0841.jpg' }
+      ]
+    },
+    trajectoire: {
+      title: 'INSTANT', medium: 'Kohle', count: 9,
+      desc: 'Ein Modell, eine Kohle… Ein paar Linien… Vorher noch nicht, nachher nie mehr… Freiheit, Intuition, Schöpfung… Im Gleichgewicht auf dem Punkt des Augenblicks. Dieser winzige Frühling, den es nur ein einziges Mal geben wird. — nach Vladimir Jankélévitch',
+      works: [
+        { title: 'Trajectoire nº1', dims: '65 × 90 cm — Kohle auf Papier', desc: 'In einem Netz schwarzer Striche verflochtene Figuren. Komprimierte Kohle verleiht der Zeichnung eine fast skulpturale Dichte.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32.jpeg' },
+        { title: 'Trajectoire nº2', dims: '50 × 70 cm — Tusche auf Papier', desc: 'Zwei Figuren in einer durchgehenden Linie skizziert. Die Linie schliesst sich nie, sie springt von einem Körper zum anderen.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32%20(1).jpeg' },
+        { title: 'Trajectoire nº3', dims: '65 × 90 cm — Sanguine auf Papier', desc: 'Figurengruppe in Sanguine. Das erdige Rot des Pigments verleiht der Verflechtung der Körper eine organische Wärme.', avail: true, img: 'img/Trajectoire%20IMG%202026-04-06%20at%2019.05.54/Trajectoire%20Image%202026-04-05%20at%2019.18.32%20(2).jpeg' }
+      ]
+    },
+    corps: {
+      title: 'Weitere Serien', medium: '', count: 3,
+      desc: '',
+      works: [
+        { title: 'Corps à corps nº1', dims: '80 × 120 cm — Öl auf Leinwand', desc: 'Zwei umschlungene Körper in Grisaille. Hände und Arme strukturieren die Komposition in einer umarmenden Bewegung.', avail: true, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.25.jpeg' },
+        { title: 'Corps à corps nº2', dims: '100 × 140 cm — Öl auf Leinwand', desc: 'Ein Paar in Nahaufnahme. Licht modelliert die Volumen mit fast fotografischer Intensität, aber die Körnung der Farbe bleibt sichtbar.', avail: false, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.25%20(1).jpeg' },
+        { title: 'Corps à corps nº3', dims: '80 × 120 cm — Öl auf Leinwand', desc: 'Männliche Figur in Grisaille. Der direkte Blick, die kräftigen Hände. Das malerische Material vermittelt physische Präsenz.', avail: true, img: 'img/Corps%20%C3%A0%20corps%20Image%202026-04-05%20at%2019.19.26.jpeg' }
+      ]
+    }
+  }
+};
+
+// ── Apply translations to all data-i18n elements ──
+function applyTranslations() {
+  var t = i18n[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) {
+      el.innerHTML = t[key];
+    }
+  });
+}
+
+// ── Navigation ──
+function navigateTo(pageId) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById(pageId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Hauteur réelle de la navbar sticky (66px mobile / 74px ordinateur) — évite le décalage sur la photo de garde
+function navbarOffset() {
+  var nav = document.querySelector('.navbar');
+  return nav ? nav.offsetHeight : 66;
+}
+
+// Caler la liste des collections sous la navbar en escamotant complètement la photo de garde.
+// On ancre sur le BAS de la peinture (+ petite marge) plutôt que sur le titre : garantit qu'aucun
+// liseré ne dépasse, même si la navbar rend quelques px plus haut selon l'appareil (iOS).
+function scrollToCollections() {
+  var hero = document.querySelector('.painting-hero img');
+  var el = document.getElementById('collections');
+  var anchorBottom = hero ? hero.getBoundingClientRect().bottom
+                          : (el ? el.getBoundingClientRect().top : 0);
+  var y = anchorBottom + window.pageYOffset - navbarOffset() + 28; // +28 = marge de sécurité (padding titre = 48px)
+  window.scrollTo(0, Math.max(0, y));
+}
+
+// Aller sur la page dédiée « Collection » (grand titre, comme Expositions/Contact)
+function goToCollectionList() {
+  navigateTo('collection-list');
+}
+
+function workItemHTML(w, t, collKey, idx) {
+  return '<div class="gallery-item">' +
+    '<img src="' + w.img + '" alt="' + w.title + '" onclick="showWork(\'' + collKey + '\', ' + idx + ')">' +
+    '<div class="work-info">' +
+      '<div class="work-title">' + w.title + '</div>' +
+      '<div class="work-dims">' + w.dims + '</div>' +
+      '<div class="work-avail">' +
+        '<span class="dot ' + (w.avail ? 'green' : 'gray') + '"></span>' +
+        (w.avail ? t.avail_yes : t.avail_no) +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+// \u2500\u2500 Track the collection currently open (for the work-detail back button) \u2500\u2500
+var currentCollKey = null;
+// \u2500\u2500 D'o\u00f9 la s\u00e9rie a \u00e9t\u00e9 ouverte : 'home' (section accueil) ou 'list' (page d\u00e9di\u00e9e Collection) \u2500\u2500
+var collectionOrigin = 'home';
+
+var collTitleKeys = { ensemble: 'coll_ensemble_title', trajectoire: 'coll_trajectoire_title', corps: 'coll_corps_title' };
+
+// Ouvrir une s\u00e9rie depuis la section Collections de l'accueil
+function openCollection(key) {
+  collectionOrigin = 'home';
+  showCollection(key);
+}
+
+// Ouvrir une s\u00e9rie depuis la page d\u00e9di\u00e9e \u00ab Collection \u00bb
+function openCollectionFromList(key) {
+  collectionOrigin = 'list';
+  showCollection(key);
+}
+
+// Retour depuis une s\u00e9rie \u2192 revenir l\u00e0 d'o\u00f9 l'on vient
+function backToCollections() {
+  if (collectionOrigin === 'list') {
+    navigateTo('collection-list');   // page d\u00e9di\u00e9e, cal\u00e9e en haut
+  } else {
+    navigateTo('home');
+    scrollToCollections();           // section accueil, sous la navbar sans photo de garde
+  }
+}
+
+function showCollection(key) {
+  var coll = collectionsData[currentLang][key];
+  var t = i18n[currentLang];
+  currentCollKey = key;
+
+  document.getElementById('collTitle').innerHTML = t[collTitleKeys[key]] || coll.title;
+  document.getElementById('collSubtitle').style.display = 'none';
+  document.getElementById('collCount').textContent = coll.works.length + (currentLang === 'DE' ? ' Werke' : currentLang === 'EN' ? ' works' : ' \u0153uvres');
+  var desc = document.getElementById('collDesc');
+  desc.textContent = coll.desc || '';
+  desc.style.display = coll.desc ? '' : 'none';
+
+  // Render works two-up, in order (odd last one sits alone in the left column)
+  var rows = '';
+  for (var i = 0; i < coll.works.length; i += 2) {
+    rows += '<div class="gallery-row">' +
+      workItemHTML(coll.works[i], t, key, i) +
+      (coll.works[i + 1] ? workItemHTML(coll.works[i + 1], t, key, i + 1) : '') +
+    '</div>';
+  }
+  document.getElementById('collWorks').innerHTML = rows;
+
+  navigateTo('collection-detail');
+}
+
+function showWork(collKey, idx) {
+  var t = i18n[currentLang];
+  var w = collectionsData[currentLang][collKey].works[idx];
+  document.getElementById('workDetailBody').innerHTML =
+    '<img src="' + w.img + '" alt="' + w.title + '">' +
+    '<div class="work-info">' +
+      '<div class="work-title">' + w.title + '</div>' +
+      '<div class="work-dims">' + w.dims + '</div>' +
+      '<div class="work-avail">' +
+        '<span class="dot ' + (w.avail ? 'green' : 'gray') + '"></span>' +
+        (w.avail ? t.avail_yes : t.avail_no) +
+      '</div>' +
+    '</div>';
+  navigateTo('work-detail');
+}
+
+// ── Footer template (shared across all pages) ──
+function renderFooter() {
+  var t = i18n[currentLang];
+  var iguri = 'https://www.instagram.com/rolandblindenberg?igsh=MTAxcmRjN29ha2R4aA%3D%3D';
+  var html =
+    '<div class="footer-cols">' +
+      '<div class="footer-col">' +
+        '<span class="footer-label">' + t.footer_contact + '</span>' +
+        '<a class="footer-link" href="mailto:atelier.rb@gmail.com">atelier.rb@gmail.com</a>' +
+      '</div>' +
+      '<div class="footer-col">' +
+        '<span class="footer-label">' + t.footer_social + '</span>' +
+        '<a class="footer-link" href="' + iguri + '" target="_blank" rel="noopener">Instagram →</a>' +
+      '</div>' +
+    '</div>' +
+    '<div class="footer-bottom">' +
+      '<span>Roland © 2026</span>' +
+      '<a href="' + iguri + '" target="_blank" rel="noopener">Instagram</a>' +
+    '</div>';
+  document.querySelectorAll('[data-footer]').forEach(function(f) { f.innerHTML = html; });
+}
+
+// ── Menu ──
+function openMenu() {
+  var overlay = document.getElementById('menuOverlay');
+  overlay.classList.remove('open');
+  void overlay.offsetHeight;
+  overlay.classList.add('open');
+}
+
+function closeMenu() {
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+
+function menuNav(pageId) {
+  closeMenu();
+  setTimeout(function() { navigateTo(pageId); }, 100);
+}
+
+function menuShowColl(key) {
+  collectionOrigin = 'list';   // sous-lien du menu Collection → retour sur la page dédiée
+  closeMenu();
+  setTimeout(function() { showCollection(key); }, 100);
+}
+
+// ── Language switcher ──
+function setLang(el) {
+  document.querySelectorAll('.navbar-lang span').forEach(function(s) { s.classList.remove('active'); });
+  el.classList.add('active');
+  currentLang = el.textContent.trim();
+  applyTranslations();
+  renderFooter();
+}
+
+// ── Work-detail back button → return to the originating collection ──
+document.getElementById('workBackBtn').onclick = function() {
+  showCollection(currentCollKey);
+};
+
+// ── Boot ──
+renderFooter();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+# macOS
+.DS_Store
+
+# Archives sources (les images utilisées sont déjà extraites dans img/)
+*.zip
+
+# Réglages locaux Claude Code
+.claude/settings.local.json
