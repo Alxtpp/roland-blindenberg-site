@@ -1,0 +1,15 @@
+# Site statique : rien à compiler, on publie la racine telle quelle.
+[build]
+  publish = "."
+
+# Les visuels des œuvres ne changent jamais une fois en ligne : cache long.
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# La page, elle, doit toujours être fraîche après un déploiement.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
