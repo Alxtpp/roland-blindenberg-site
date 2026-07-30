@@ -264,6 +264,18 @@ img.painting {
   flex-direction: column;
   min-width: 0;
 }
+/* Œuvre panoramique : seule sur sa rangée, elle occupe les deux colonnes
+   pour qu'on perçoive son format. */
+.gallery-item.wide { grid-column: 1 / -1; }
+/* Un vrai panoramique est limité par la largeur ; la hauteur maximale n'entre
+   en jeu que si une œuvre peu allongée est marquée panoramique par erreur —
+   elle reste alors centrée au lieu d'occuper tout l'écran. */
+.gallery-item.wide img {
+  width: auto;
+  max-width: 100%;
+  max-height: 80vh;
+  margin: 0 auto;
+}
 .gallery-item img {
   display: block;
   width: 100%;                 /* fill the column; height follows natural ratio */
@@ -1064,7 +1076,10 @@ function applyContent(data) {
         desc: meta.desc,
         works: coll.works.map(function (w) {
           var t = localized(w, code);
-          return { title: t.title, dims: t.dims, desc: t.desc, avail: w.avail, img: w.img };
+          return {
+            title: t.title, dims: t.dims, desc: t.desc,
+            avail: w.avail, img: w.img, wide: !!w.wide
+          };
         })
       };
     });
@@ -1157,7 +1172,7 @@ function esc(s) {
 }
 
 function workItemHTML(w, t, collKey, idx) {
-  return '<div class="gallery-item">' +
+  return '<div class="gallery-item' + (w.wide ? ' wide' : '') + '">' +
     '<img src="' + esc(w.img) + '" alt="' + esc(w.title) + '" onclick="showWork(\'' + esc(collKey) + '\', ' + idx + ')">' +
     '<div class="work-info">' +
       '<div class="work-title">' + esc(w.title) + '</div>' +
@@ -1219,13 +1234,21 @@ function showCollection(key) {
   desc.textContent = coll.desc || '';
   desc.style.display = coll.desc ? '' : 'none';
 
-  // Render works two-up, in order (odd last one sits alone in the left column)
+  // Deux œuvres par rangée, dans l'ordre. Une œuvre panoramique reste seule sur
+  // sa rangée et s'étend sur les deux colonnes ; le reste s'apparie normalement
+  // (une œuvre isolée en fin de série tient la colonne de gauche).
   var rows = '';
-  for (var i = 0; i < coll.works.length; i += 2) {
+  var i = 0;
+  while (i < coll.works.length) {
+    var first = coll.works[i];
+    var second = first.wide ? null : coll.works[i + 1];
+    if (second && second.wide) second = null;
+
     rows += '<div class="gallery-row">' +
-      workItemHTML(coll.works[i], t, key, i) +
-      (coll.works[i + 1] ? workItemHTML(coll.works[i + 1], t, key, i + 1) : '') +
+      workItemHTML(first, t, key, i) +
+      (second ? workItemHTML(second, t, key, i + 1) : '') +
     '</div>';
+    i += second ? 2 : 1;
   }
   document.getElementById('collWorks').innerHTML = rows;
 

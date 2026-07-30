@@ -129,6 +129,23 @@ input, textarea, select { font-family: var(--font-body); font-weight: 300; }
 .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--ink); }
 .hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
 
+/* `.field .choice` et non `.choice` : il faut passer devant `.field label`,
+   qui met les libellés de champ en majuscules. */
+.field .choice {
+  display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
+  border: 1px solid var(--line); margin-bottom: 8px; cursor: pointer;
+  font-size: 14px; line-height: 1.45; text-transform: none; letter-spacing: 0; color: var(--ink);
+}
+.field .choice:hover { border-color: var(--ink); }
+.field .choice input { margin-top: 3px; flex: 0 0 auto; width: auto; }
+.field .choice strong { font-weight: 500; }
+.field .choice:has(input:checked) { border-color: var(--ink); background: var(--soft); }
+
+.tag {
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  border: 1px solid var(--line); padding: 2px 7px; color: var(--muted);
+}
+
 .drop {
   border: 1px dashed var(--line); padding: 22px; text-align: center; color: var(--muted);
   font-size: 14px; cursor: pointer;
@@ -231,6 +248,15 @@ details.trans .inner { padding-top: 16px; }
     </div>
 
     <div class="field">
+      <label>Mise en page dans la galerie</label>
+      <label class="choice"><input type="radio" name="layout" value="normal" checked>
+        <span><strong>Standard</strong> — une colonne, comme les autres œuvres.</span></label>
+      <label class="choice"><input type="radio" name="layout" value="wide">
+        <span><strong>Panoramique</strong> — toute la largeur, sur les deux colonnes.
+        Pour les grands formats très allongés.</span></label>
+    </div>
+
+    <div class="field">
       <label>Disponibilité</label>
       <label style="text-transform:none;letter-spacing:0;font-size:15px;color:var(--ink);display:flex;align-items:center;gap:9px;cursor:pointer">
         <input type="checkbox" id="fAvail" checked style="width:auto"> Disponible à la vente
@@ -290,6 +316,7 @@ var activeKey = null;    // série affichée
 var dirty = false;       // modifications non enregistrées
 var editingId = null;    // œuvre en cours de modification (null = ajout)
 var pendingImage = null; // { path } déposé mais pas encore enregistré
+var pendingFile = null;  // photo choisie, conservée pour la repréparer si besoin
 
 var $ = function (id) { return document.getElementById(id); };
 
@@ -438,6 +465,7 @@ function renderList() {
             (w.avail ? 'Disponible' : 'Non disponible') +
           '</button>' +
           '<span class="langs">FR' + (extra.length ? ' · ' + extra.join(' · ').toUpperCase() : '') + '</span>' +
+          (w.wide ? '<span class="tag">Panoramique</span>' : '') +
         '</div>' +
       '</div>' +
       '<div class="work-actions">' +
@@ -488,6 +516,7 @@ function onAction(act, id) {
 function openSheet(work) {
   editingId = work ? work.id : null;
   pendingImage = null;
+  pendingFile = null;
 
   $('sheetTitle').textContent = work ? 'Modifier l\'œuvre' : 'Ajouter une œuvre';
   $('okBtn').textContent = work ? 'Valider' : 'Ajouter';
@@ -506,6 +535,9 @@ function openSheet(work) {
   $('fTitleEn').value = en.title; $('fDimsEn').value = en.dims; $('fDescEn').value = en.desc;
   $('fTitleDe').value = de.title; $('fDimsDe').value = de.dims; $('fDescDe').value = de.desc;
   $('fAvail').checked = work ? work.avail : true;
+
+  var layout = work && work.wide ? 'wide' : 'normal';
+  document.querySelector('input[name=layout][value="' + layout + '"]').checked = true;
 
   var prev = $('preview');
   if (work) {
@@ -527,6 +559,7 @@ function closeSheet() {
   $('sheet').hidden = true;
   editingId = null;
   pendingImage = null;
+  pendingFile = null;
 }
 
 $('addBtn').addEventListener('click', function () { openSheet(null); });
@@ -546,11 +579,25 @@ $('file').addEventListener('change', function () {
   if (this.files && this.files[0]) handleFile(this.files[0]);
 });
 
-var MAX_SIDE = 1800;
+// Une œuvre panoramique s'affiche sur toute la largeur : il lui faut plus de
+// pixels qu'à une œuvre tenant une demi-colonne.
+var MAX_SIDE = { normal: 1800, wide: 2600 };
+
+function currentLayout() {
+  return document.querySelector('input[name=layout]:checked').value;
+}
+
+// Changer de mise en page après avoir choisi la photo : on la reprépare à la
+// bonne résolution.
+Array.prototype.forEach.call(document.querySelectorAll('input[name=layout]'), function (radio) {
+  radio.addEventListener('change', function () {
+    if (pendingFile) handleFile(pendingFile);
+  });
+});
 
 function shrink(file) {
   return createImageBitmap(file, { imageOrientation: 'from-image' }).then(function (bmp) {
-    var scale = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+    var scale = Math.min(1, MAX_SIDE[currentLayout()] / Math.max(bmp.width, bmp.height));
     var w = Math.round(bmp.width * scale);
     var h = Math.round(bmp.height * scale);
     var canvas = document.createElement('canvas');
@@ -576,6 +623,7 @@ function handleFile(file) {
     $('fileHint').textContent = 'Ce fichier n\'est pas une image.';
     return;
   }
+  pendingFile = file;
   $('fileHint').textContent = 'Préparation de l\'image…';
   $('okBtn').disabled = true;
 
@@ -629,6 +677,9 @@ $('okBtn').addEventListener('click', function () {
     avail: $('fAvail').checked,
     fr: { title: title, dims: $('fDims').value.trim(), desc: $('fDesc').value.trim() }
   };
+
+  // Absent du contenu quand la mise en page est standard : c'est l'exception qu'on note.
+  if (document.querySelector('input[name=layout]:checked').value === 'wide') work.wide = true;
 
   [['en', 'En'], ['de', 'De']].forEach(function (pair) {
     var t = $('fTitle' + pair[1]).value.trim();

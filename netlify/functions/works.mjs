@@ -71,6 +71,9 @@ function validate(data) {
         return `Œuvre « ${w.id} » : chemin d'image invalide.`;
       }
       if (typeof w.avail !== 'boolean') return `Œuvre « ${w.id} » : disponibilité invalide.`;
+      if (w.wide !== undefined && typeof w.wide !== 'boolean') {
+        return `Œuvre « ${w.id} » : mise en page invalide.`;
+      }
 
       if (!isText(w.fr) || !w.fr.title.trim()) {
         return `Œuvre « ${w.id} » : le titre en français est obligatoire.`;
