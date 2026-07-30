@@ -1,5 +1,6 @@
 // Lecture publique et écriture protégée du contenu du site (les œuvres).
-import { contentStore, CONTENT_KEY, denyUnlessAdmin, json } from '../lib/admin.mjs';
+import { contentStore, mediaStore, CONTENT_KEY, denyUnlessAdmin, json } from '../lib/admin.mjs';
+import { orphanKeys } from '../lib/orphans.mjs';
 
 export const config = { path: '/api/works' };
 
@@ -45,7 +46,26 @@ async function write(req) {
 
   await contentStore().setJSON(CONTENT_KEY, data);
   const total = data.collections.reduce((n, c) => n + c.works.length, 0);
-  return json({ ok: true, works: total, savedAt: new Date().toISOString() });
+  const cleaned = await sweepMedia(data);
+
+  return json({ ok: true, works: total, cleaned, savedAt: new Date().toISOString() });
+}
+
+/**
+ * Supprime les images devenues inutiles. Le contenu est déjà enregistré à ce
+ * stade : un échec du nettoyage ne doit pas faire échouer la publication.
+ */
+async function sweepMedia(data) {
+  try {
+    const store = mediaStore();
+    const { blobs } = await store.list();
+    const orphans = orphanKeys(data, blobs.map((b) => b.key));
+
+    await Promise.all(orphans.map((key) => store.delete(key)));
+    return orphans.length;
+  } catch {
+    return 0;
+  }
 }
 
 /** Renvoie un message d'erreur si la structure est incorrecte, sinon `null`. */

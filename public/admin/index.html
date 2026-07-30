@@ -720,7 +720,11 @@ $('saveBtn').addEventListener('click', function () {
   })
     .then(function (res) {
       setDirty(false);
-      toast('Le site est à jour — ' + res.works + ' œuvres en ligne.');
+      var msg = 'Le site est à jour — ' + res.works + ' œuvres en ligne.';
+      if (res.cleaned) {
+        msg += ' ' + res.cleaned + (res.cleaned === 1 ? ' image inutilisée effacée.' : ' images inutilisées effacées.');
+      }
+      toast(msg);
     })
     .catch(function (err) {
       setDirty(true);
