@@ -75,11 +75,19 @@ function validate(data) {
     return 'Aucune série dans le contenu.';
   }
 
+  if (data.banner !== undefined && (typeof data.banner !== 'string' || !isSafeImage(data.banner))) {
+    return 'Bannière invalide.';
+  }
+
+  const seenKeys = new Set();
+
   let total = 0;
   for (const coll of data.collections) {
     if (!coll || typeof coll.key !== 'string' || !/^[a-z0-9-]{1,40}$/.test(coll.key)) {
       return 'Identifiant de série invalide.';
     }
+    if (seenKeys.has(coll.key)) return `Deux séries partagent le même identifiant « ${coll.key} ».`;
+    seenKeys.add(coll.key);
     if (!Array.isArray(coll.works)) return `Série « ${coll.key} » : liste d'œuvres manquante.`;
 
     total += coll.works.length;

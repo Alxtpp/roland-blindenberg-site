@@ -210,6 +210,7 @@ a { color: inherit; }
   color: #888;
 }
 .menu-bottom a { text-decoration: none; }
+.menu-social { display: inline-flex; gap: 18px; }
 
 /* ── PAGES ── */
 .page { display: none; }
@@ -473,6 +474,7 @@ img.painting {
 }
 .footer-bottom a { text-decoration: none; color: #888; }
 .footer-bottom a:hover { color: var(--fg); }
+.footer-bottom-social { display: inline-flex; gap: 18px; }
 
 /* ── COLLECTION DETAIL ── */
 .collection-header {
@@ -702,15 +704,16 @@ img.painting {
   <button class="menu-close" onclick="closeMenu()" data-i18n="menu_close">Fermer</button>
   <ul class="menu-links">
     <li><a href="#" onclick="menuNav('about')" data-i18n="menu_about">Roland Blindenberg</a></li>
-    <li><a href="#" onclick="menuNav('collection-list')" data-i18n="menu_collection">Collection</a></li>
-    <li class="menu-sub"><a href="#" onclick="menuShowColl('ensemble')" data-i18n="menu_ensemble">Série "ENSEMBLE" Abstraction figurative.</a></li>
-    <li class="menu-sub"><a href="#" onclick="menuShowColl('trajectoire')" data-i18n="menu_instant">"INSTANT" fusain.</a></li>
-    <li class="menu-sub"><a href="#" onclick="menuShowColl('corps')" data-i18n="menu_corps">Autres séries.</a></li>
+    <li id="menuCollItem"><a href="#" onclick="menuNav('collection-list')" data-i18n="menu_collection">Collection</a></li>
+    <!-- Les sous-liens de séries sont insérés ici dynamiquement — voir renderMenuColls(). -->
     <li><a href="#" onclick="menuNav('expositions')" data-i18n="menu_expositions">Expositions</a></li>
     <li><a href="#" onclick="menuNav('contact')">Contact</a></li>
   </ul>
   <div class="menu-bottom">
-    <a href="https://www.instagram.com/rolandblindenberg?igsh=MTAxcmRjN29ha2R4aA%3D%3D" target="_blank" rel="noopener">Instagram</a>
+    <span class="menu-social">
+      <a href="https://www.instagram.com/rolandblindenberg?igsh=MTAxcmRjN29ha2R4aA%3D%3D" target="_blank" rel="noopener">Instagram</a>
+      <a href="#" data-linkedin target="_blank" rel="noopener">LinkedIn</a>
+    </span>
     <span>Roland &copy; 2026</span>
   </div>
 </div>
@@ -726,24 +729,8 @@ img.painting {
   <!-- Collections -->
   <div class="section-label" id="collections" data-i18n="section_collections">Collections</div>
 
-  <div class="collection-row" onclick="openCollection('ensemble')">
-    <div class="collection-row-left">
-      <span class="collection-row-name" data-i18n="coll_ensemble_title">Série "ENSEMBLE" <span class="cr-medium">Abstraction figurative.</span></span>
-    </div>
-    <div class="collection-row-right" data-i18n="row_ensemble_count">11 œuvres <span class="arrow">→</span></div>
-  </div>
-  <div class="collection-row" onclick="openCollection('trajectoire')">
-    <div class="collection-row-left">
-      <span class="collection-row-name" data-i18n="coll_trajectoire_title">"INSTANT" fusain.</span>
-    </div>
-    <div class="collection-row-right" data-i18n="row_trajectoire_count">9 œuvres <span class="arrow">→</span></div>
-  </div>
-  <div class="collection-row" onclick="openCollection('corps')">
-    <div class="collection-row-left">
-      <span class="collection-row-name" data-i18n="coll_corps_title">Autres séries.</span>
-    </div>
-    <div class="collection-row-right" data-i18n="row_corps_count">3 œuvres <span class="arrow">→</span></div>
-  </div>
+  <!-- Les séries sont générées depuis le contenu (/api/works) — voir renderCollectionNav(). -->
+  <div id="homeCollections"></div>
 
   <!-- Featured works teaser (flexible gallery row) -->
   <div class="gallery-row" style="margin-top:64px;">
@@ -778,24 +765,8 @@ img.painting {
     <div class="page-title" data-i18n="menu_collection">Collection</div>
   </div>
 
-  <div class="collection-row" onclick="openCollectionFromList('ensemble')">
-    <div class="collection-row-left">
-      <span class="collection-row-name" data-i18n="coll_ensemble_title">Série "ENSEMBLE" <span class="cr-medium">Abstraction figurative.</span></span>
-    </div>
-    <div class="collection-row-right" data-i18n="row_ensemble_count">11 œuvres <span class="arrow">→</span></div>
-  </div>
-  <div class="collection-row" onclick="openCollectionFromList('trajectoire')">
-    <div class="collection-row-left">
-      <span class="collection-row-name" data-i18n="coll_trajectoire_title">"INSTANT" fusain.</span>
-    </div>
-    <div class="collection-row-right" data-i18n="row_trajectoire_count">9 œuvres <span class="arrow">→</span></div>
-  </div>
-  <div class="collection-row" onclick="openCollectionFromList('corps')">
-    <div class="collection-row-left">
-      <span class="collection-row-name" data-i18n="coll_corps_title">Autres séries.</span>
-    </div>
-    <div class="collection-row-right" data-i18n="row_corps_count">3 œuvres <span class="arrow">→</span></div>
-  </div>
+  <!-- Séries générées dynamiquement — voir renderCollectionNav(). -->
+  <div id="listCollections"></div>
 
   <footer class="site-footer" data-footer></footer>
 </div>
@@ -877,7 +848,11 @@ img.painting {
   <div class="contact-content">
     <p><a href="mailto:atelier.rb@gmail.com">atelier.rb@gmail.com</a></p>
     <p data-i18n="contact_location">Genève, Suisse</p>
-    <p><a href="https://www.instagram.com/rolandblindenberg?igsh=MTAxcmRjN29ha2R4aA%3D%3D" target="_blank" rel="noopener">Instagram</a></p>
+    <p>
+      <a href="https://www.instagram.com/rolandblindenberg?igsh=MTAxcmRjN29ha2R4aA%3D%3D" target="_blank" rel="noopener">Instagram</a>
+      &nbsp;·&nbsp;
+      <a href="#" data-linkedin target="_blank" rel="noopener">LinkedIn</a>
+    </p>
     <br>
     <p data-i18n="contact_text">Pour toute demande d'acquisition, de prêt ou d'exposition, n'hésitez pas à écrire. Je réponds personnellement à chaque message.</p>
   </div>
@@ -1041,6 +1016,11 @@ var i18n = {
 // (/api/works), avec repli sur le fichier livré avec le site.
 var collectionsData = {};
 var contentReady = null;
+var collectionOrder = [];   // clés des séries dans l'ordre d'affichage (corps en dernier)
+
+// Profil LinkedIn de Roland.
+// TODO : remplacer par l'URL exacte que Roland doit transmettre.
+var LINKEDIN_URL = 'https://www.linkedin.com/in/roland-blindenberg';
 
 var LANG_CODE = { FR: 'fr', EN: 'en', DE: 'de' };
 var WORK_UNIT = {
@@ -1085,19 +1065,14 @@ function applyContent(data) {
     });
   });
 
-  // Le nombre d'œuvres affiché sur l'accueil suit désormais le contenu réel.
-  data.collections.forEach(function (coll) {
-    var key = 'row_' + coll.key + '_count';
-    var n = coll.works.length;
-    Object.keys(LANG_CODE).forEach(function (lang) {
-      if (i18n[lang] && i18n[lang][key] !== undefined) {
-        var unit = WORK_UNIT[lang][n === 1 ? 0 : 1];
-        i18n[lang][key] = n + ' ' + unit + ' <span class="arrow">→</span>';
-      }
-    });
-  });
+  // Ordre d'affichage des séries — « Autres séries » toujours en dernier.
+  collectionOrder = orderedCollKeys(data);
+
+  // Bannière du site pilotée depuis l'admin (repli : l'image livrée avec le site).
+  applyBanner(data);
 
   applyTranslations();
+  renderCollectionNav();
 
   // Si une série est déjà ouverte à l'écran, on la redessine avec le contenu reçu.
   var detail = document.getElementById('collection-detail');
@@ -1132,6 +1107,114 @@ function applyTranslations() {
       el.innerHTML = t[key];
     }
   });
+}
+
+// ── Collections dynamiques ──
+// « Autres séries » (clé corps, ou toute série marquée pinned) reste toujours
+// la dernière, quel que soit l'ordre reçu.
+function isLastColl(key, coll) {
+  return key === 'corps' || (coll && coll.pinned === true);
+}
+
+function orderedCollKeys(data) {
+  var normal = [], last = [];
+  (data.collections || []).forEach(function (c) {
+    (isLastColl(c.key, c) ? last : normal).push(c.key);
+  });
+  return normal.concat(last);
+}
+
+// Libellé d'une série pour les rangées « Collections » (peut contenir un <span
+// class="cr-medium"> masqué sur mobile). Les trois séries d'origine gardent leur
+// libellé validé via i18n ; les nouvelles séries sont composées depuis le contenu.
+function collRowHTML(key) {
+  var legacy = i18n[currentLang]['coll_' + key + '_title'];
+  if (legacy !== undefined) return legacy;
+
+  var coll = (collectionsData[currentLang] || {})[key] || {};
+  var main = coll.title || key;
+  var medium = coll.medium || '';
+  return medium
+    ? '"' + esc(main) + '" <span class="cr-medium">' + esc(medium) + '.</span>'
+    : esc(main) + '.';
+}
+
+// Même libellé, en texte simple, pour les sous-liens du menu (pas de masquage mobile).
+function collMenuText(key) {
+  var LEGACY_MENU = { ensemble: 'menu_ensemble', trajectoire: 'menu_instant', corps: 'menu_corps' };
+  var mk = LEGACY_MENU[key];
+  if (mk && i18n[currentLang][mk] !== undefined) return i18n[currentLang][mk];
+
+  var coll = (collectionsData[currentLang] || {})[key] || {};
+  var main = coll.title || key;
+  var medium = coll.medium || '';
+  return medium ? '"' + main + '" ' + medium + '.' : main + '.';
+}
+
+function collCountHTML(key) {
+  var coll = (collectionsData[currentLang] || {})[key] || {};
+  var n = (coll.works || []).length;
+  var unit = WORK_UNIT[currentLang][n === 1 ? 0 : 1];
+  return n + ' ' + unit + ' <span class="arrow">→</span>';
+}
+
+function collRow(key, handler) {
+  return '<div class="collection-row" onclick="' + handler + '(\'' + esc(key) + '\')">' +
+    '<div class="collection-row-left">' +
+      '<span class="collection-row-name">' + collRowHTML(key) + '</span>' +
+    '</div>' +
+    '<div class="collection-row-right">' + collCountHTML(key) + '</div>' +
+  '</div>';
+}
+
+// Redessine les listes de séries (accueil + page Collection) et les sous-liens du menu.
+function renderCollectionNav() {
+  var home = '', list = '';
+  collectionOrder.forEach(function (key) {
+    home += collRow(key, 'openCollection');
+    list += collRow(key, 'openCollectionFromList');
+  });
+  var homeEl = document.getElementById('homeCollections');
+  var listEl = document.getElementById('listCollections');
+  if (homeEl) homeEl.innerHTML = home;
+  if (listEl) listEl.innerHTML = list;
+  renderMenuColls();
+}
+
+function renderMenuColls() {
+  var anchor = document.getElementById('menuCollItem');
+  if (!anchor) return;
+  var ul = anchor.parentNode;
+
+  // On repart d'une base propre : on retire les sous-liens précédemment insérés.
+  Array.prototype.slice.call(ul.querySelectorAll('.menu-sub')).forEach(function (li) {
+    ul.removeChild(li);
+  });
+
+  var after = anchor.nextSibling;
+  collectionOrder.forEach(function (key) {
+    var li = document.createElement('li');
+    li.className = 'menu-sub';
+    var a = document.createElement('a');
+    a.href = '#';
+    a.textContent = collMenuText(key);
+    a.onclick = function () { menuShowColl(key); return false; };
+    li.appendChild(a);
+    ul.insertBefore(li, after);
+  });
+}
+
+// Photo de garde pilotée depuis l'admin.
+function applyBanner(data) {
+  if (data && data.banner) {
+    var img = document.querySelector('.painting-hero img');
+    if (img) img.src = data.banner;
+  }
+}
+
+// Renseigne l'URL LinkedIn sur tous les liens marqués data-linkedin.
+function applySocialLinks() {
+  document.querySelectorAll('[data-linkedin]').forEach(function (a) { a.href = LINKEDIN_URL; });
 }
 
 // ── Navigation ──
@@ -1190,8 +1273,6 @@ var currentCollKey = null;
 // \u2500\u2500 D'o\u00f9 la s\u00e9rie a \u00e9t\u00e9 ouverte : 'home' (section accueil) ou 'list' (page d\u00e9di\u00e9e Collection) \u2500\u2500
 var collectionOrigin = 'home';
 
-var collTitleKeys = { ensemble: 'coll_ensemble_title', trajectoire: 'coll_trajectoire_title', corps: 'coll_corps_title' };
-
 // Ouvrir une s\u00e9rie depuis la section Collections de l'accueil
 function openCollection(key) {
   collectionOrigin = 'home';
@@ -1227,7 +1308,7 @@ function showCollection(key) {
     return;
   }
 
-  document.getElementById('collTitle').innerHTML = t[collTitleKeys[key]] || coll.title;
+  document.getElementById('collTitle').innerHTML = collRowHTML(key);
   document.getElementById('collSubtitle').style.display = 'none';
   document.getElementById('collCount').textContent = coll.works.length + (currentLang === 'DE' ? ' Werke' : currentLang === 'EN' ? ' works' : ' \u0153uvres');
   var desc = document.getElementById('collDesc');
@@ -1287,11 +1368,15 @@ function renderFooter() {
       '<div class="footer-col">' +
         '<span class="footer-label">' + t.footer_social + '</span>' +
         '<a class="footer-link" href="' + iguri + '" target="_blank" rel="noopener">Instagram →</a>' +
+        '<a class="footer-link" href="' + LINKEDIN_URL + '" target="_blank" rel="noopener">LinkedIn →</a>' +
       '</div>' +
     '</div>' +
     '<div class="footer-bottom">' +
       '<span>Roland © 2026</span>' +
-      '<a href="' + iguri + '" target="_blank" rel="noopener">Instagram</a>' +
+      '<span class="footer-bottom-social">' +
+        '<a href="' + iguri + '" target="_blank" rel="noopener">Instagram</a>' +
+        '<a href="' + LINKEDIN_URL + '" target="_blank" rel="noopener">LinkedIn</a>' +
+      '</span>' +
     '</div>';
   document.querySelectorAll('[data-footer]').forEach(function(f) { f.innerHTML = html; });
 }
@@ -1326,6 +1411,7 @@ function setLang(el) {
   currentLang = el.textContent.trim();
   applyTranslations();
   renderFooter();
+  renderCollectionNav();
 
   // Une série ouverte doit suivre le changement de langue.
   var detail = document.getElementById('collection-detail');
@@ -1338,6 +1424,7 @@ document.getElementById('workBackBtn').onclick = function() {
 };
 
 // ── Boot ──
+applySocialLinks();
 renderFooter();
 loadContent();
 </script>

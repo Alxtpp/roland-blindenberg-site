@@ -11,13 +11,21 @@ const PREFIX = '/media/';
 /** Les clés d'images réellement utilisées par le contenu. */
 export function usedKeys(data) {
   const used = new Set();
-  for (const coll of data.collections || []) {
-    for (const work of coll.works || []) {
-      if (typeof work.img === 'string' && work.img.startsWith(PREFIX)) {
-        used.add(decodeURIComponent(work.img.slice(PREFIX.length)));
-      }
+
+  const keep = (src) => {
+    if (typeof src === 'string' && src.startsWith(PREFIX)) {
+      used.add(decodeURIComponent(src.slice(PREFIX.length)));
     }
+  };
+
+  for (const coll of data.collections || []) {
+    for (const work of coll.works || []) keep(work.img);
   }
+
+  // La bannière du site vit dans le même dépôt de médias : sans ça, elle serait
+  // prise pour une image orpheline et effacée après le délai de grâce.
+  keep(data.banner);
+
   return used;
 }
 

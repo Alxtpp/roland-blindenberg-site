@@ -83,6 +83,13 @@ input, textarea, select { font-family: var(--font-body); font-weight: 300; }
 .tab.active { color: var(--ink); border-bottom-color: var(--ink); }
 .tab span { font-size: 12px; color: var(--muted); margin-left: 6px; }
 
+/* Actions d'administration greffées à la fin de la barre d'onglets. */
+.tab-action { color: var(--ink); }
+.tab-action:hover { color: var(--ink); border-bottom-color: var(--line); }
+#addCollTab { margin-left: auto; }
+
+.empty-actions { margin-top: 18px; }
+
 /* ── Liste des œuvres ── */
 .work {
   display: flex; gap: 16px; align-items: flex-start;
@@ -304,6 +311,60 @@ details.trans .inner { padding-top: 16px; }
   </div>
 </div>
 
+<!-- ── Nouvelle collection ── -->
+<div class="sheet" id="collSheet" hidden>
+  <div class="sheet-in">
+    <h2>Nouvelle collection</h2>
+
+    <div class="field">
+      <label for="cName">Nom de la série <span style="text-transform:none;letter-spacing:0">(français — obligatoire)</span></label>
+      <input type="text" id="cName" placeholder="Aquarelles">
+    </div>
+    <div class="field">
+      <label for="cMedium">Technique ou sous-titre <span style="text-transform:none;letter-spacing:0">(facultatif)</span></label>
+      <input type="text" id="cMedium" placeholder="sur papier">
+    </div>
+
+    <details class="trans">
+      <summary>Traductions anglaise et allemande (facultatives)</summary>
+      <div class="inner">
+        <p class="hint" style="margin:0 0 16px">Si vous laissez ces champs vides, le texte français s'affichera dans les autres langues.</p>
+        <div class="field"><label for="cNameEn">Anglais — nom</label><input type="text" id="cNameEn"></div>
+        <div class="field"><label for="cMediumEn">Anglais — technique</label><input type="text" id="cMediumEn"></div>
+        <div class="field"><label for="cNameDe">Allemand — nom</label><input type="text" id="cNameDe"></div>
+        <div class="field"><label for="cMediumDe">Allemand — technique</label><input type="text" id="cMediumDe"></div>
+      </div>
+    </details>
+
+    <p class="hint">La série apparaît aussitôt dans l'administration, et sur le site après « Enregistrer ». Elle se place juste avant « Autres séries ».</p>
+    <div class="err-inline" id="collErr"></div>
+    <div class="sheet-actions">
+      <button class="btn" id="collCancel" type="button">Annuler</button>
+      <button class="btn btn-primary" id="collOk" type="button">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Bannière du site ── -->
+<div class="sheet" id="bannerSheet" hidden>
+  <div class="sheet-in">
+    <h2>Bannière du site</h2>
+    <p class="hint" style="margin:-6px 0 18px">Grande image affichée en haut de la page d'accueil. Un format paysage large donne le meilleur résultat.</p>
+
+    <div class="field">
+      <img class="preview" id="bannerPreview" hidden alt="">
+      <div class="drop" id="bannerDrop">Choisir une image, ou la déposer ici</div>
+      <input type="file" id="bannerFile" accept="image/*" hidden>
+      <div class="hint" id="bannerHint">L'image est automatiquement allégée avant l'envoi.</div>
+    </div>
+
+    <p class="hint">La nouvelle bannière sera visible sur le site après « Enregistrer ».</p>
+    <div class="sheet-actions">
+      <button class="btn btn-primary" id="bannerClose" type="button">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -407,10 +468,23 @@ $('siteBtn').addEventListener('click', function () { window.open('/', '_blank');
 function start() {
   $('login').hidden = true;
   $('app').hidden = false;
+  orderCollections();
   activeKey = content.collections[0].key;
   setDirty(false);
   renderTabs();
   renderList();
+}
+
+// « Autres séries » (clé corps, ou série marquée pinned) reste toujours en dernier.
+function isLastColl(coll) {
+  return coll.key === 'corps' || coll.pinned === true;
+}
+
+function orderCollections() {
+  if (!content || !Array.isArray(content.collections)) return;
+  var normal = [], last = [];
+  content.collections.forEach(function (c) { (isLastColl(c) ? last : normal).push(c); });
+  content.collections = normal.concat(last);
 }
 
 function boot() {
@@ -427,19 +501,27 @@ function collection(key) {
 }
 
 function renderTabs() {
-  $('tabs').innerHTML = content.collections.map(function (c) {
+  var tabs = content.collections.map(function (c) {
     var label = (c.fr && c.fr.title) || c.key;
     return '<button class="tab' + (c.key === activeKey ? ' active' : '') + '" data-key="' + esc(c.key) + '">' +
       esc(label) + '<span>' + c.works.length + '</span></button>';
   }).join('');
 
-  Array.prototype.forEach.call($('tabs').querySelectorAll('.tab'), function (btn) {
+  // Actions greffées après les onglets, dans l'ordre imaginé par le client :
+  // … dernière série · ➕ nouvelle collection · 🖼 bannière.
+  tabs += '<button class="tab tab-action" id="addCollTab" type="button">＋ Nouvelle collection</button>' +
+          '<button class="tab tab-action" id="bannerTab" type="button">🖼 Bannière du site</button>';
+  $('tabs').innerHTML = tabs;
+
+  Array.prototype.forEach.call($('tabs').querySelectorAll('.tab[data-key]'), function (btn) {
     btn.addEventListener('click', function () {
       activeKey = btn.getAttribute('data-key');
       renderTabs();
       renderList();
     });
   });
+  $('addCollTab').addEventListener('click', openCollSheet);
+  $('bannerTab').addEventListener('click', openBannerSheet);
 }
 
 function renderList() {
@@ -447,7 +529,13 @@ function renderList() {
   var works = coll.works;
 
   if (!works.length) {
-    $('list').innerHTML = '<div class="empty">Aucune œuvre dans cette série pour l\'instant.</div>';
+    var canDelete = content.collections.length > 1 && !isLastColl(coll);
+    $('list').innerHTML = '<div class="empty">Aucune œuvre dans cette série pour l\'instant.' +
+      (canDelete
+        ? '<div class="empty-actions"><button class="btn btn-sm btn-danger" id="delCollBtn" type="button">Supprimer cette série vide</button></div>'
+        : '') +
+      '</div>';
+    if (canDelete) $('delCollBtn').addEventListener('click', deleteActiveCollection);
     return;
   }
 
@@ -595,9 +683,11 @@ Array.prototype.forEach.call(document.querySelectorAll('input[name=layout]'), fu
   });
 });
 
-function shrink(file) {
+// Redimensionne une image côté navigateur jusqu'à `maxSide` px sur son plus
+// grand côté, puis l'encode (WebP, repli JPEG). Partagé entre œuvres et bannière.
+function shrinkTo(file, maxSide) {
   return createImageBitmap(file, { imageOrientation: 'from-image' }).then(function (bmp) {
-    var scale = Math.min(1, MAX_SIDE[currentLayout()] / Math.max(bmp.width, bmp.height));
+    var scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
     var w = Math.round(bmp.width * scale);
     var h = Math.round(bmp.height * scale);
     var canvas = document.createElement('canvas');
@@ -616,6 +706,10 @@ function shrink(file) {
       }, 'image/webp', 0.85);
     });
   });
+}
+
+function shrink(file) {
+  return shrinkTo(file, MAX_SIDE[currentLayout()]);
 }
 
 function handleFile(file) {
@@ -741,6 +835,137 @@ $('backupBtn').addEventListener('click', function () {
   a.click();
   URL.revokeObjectURL(a.href);
 });
+
+// ── Nouvelle collection ──
+// Identifiant technique tiré du nom : accents retirés, seuls a-z0-9- gardés.
+function slugColl(name) {
+  var clean = (name || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+  return clean;
+}
+
+// Garantit un identifiant unique (et jamais « corps », réservé à « Autres séries »).
+function uniqueCollKey(base) {
+  var used = {};
+  content.collections.forEach(function (c) { used[c.key] = true; });
+  var key = base, n = 2;
+  while (!key || used[key] || key === 'corps') { key = (base || 'serie') + '-' + n; n++; }
+  return key;
+}
+
+function openCollSheet() {
+  ['cName', 'cMedium', 'cNameEn', 'cMediumEn', 'cNameDe', 'cMediumDe'].forEach(function (id) { $(id).value = ''; });
+  $('collErr').textContent = '';
+  $('collSheet').hidden = false;
+  $('cName').focus();
+}
+
+function closeCollSheet() { $('collSheet').hidden = true; }
+
+$('collCancel').addEventListener('click', closeCollSheet);
+$('collSheet').addEventListener('click', function (e) { if (e.target === $('collSheet')) closeCollSheet(); });
+
+$('collOk').addEventListener('click', function () {
+  var name = $('cName').value.trim();
+  if (!name) { $('collErr').textContent = 'Le nom de la série est obligatoire.'; return; }
+
+  var coll = {
+    key: uniqueCollKey(slugColl(name) || 'serie'),
+    fr: { title: name, medium: $('cMedium').value.trim(), desc: '' },
+    works: []
+  };
+  [['en', 'En'], ['de', 'De']].forEach(function (pair) {
+    var t = $('cName' + pair[1]).value.trim();
+    var m = $('cMedium' + pair[1]).value.trim();
+    if (t || m) coll[pair[0]] = { title: t || name, medium: m, desc: '' };
+  });
+
+  // Insertion juste avant la première série épinglée (« Autres séries »).
+  var idx = content.collections.findIndex(isLastColl);
+  if (idx < 0) idx = content.collections.length;
+  content.collections.splice(idx, 0, coll);
+
+  activeKey = coll.key;
+  setDirty(true);
+  closeCollSheet();
+  renderTabs();
+  renderList();
+});
+
+function deleteActiveCollection() {
+  var coll = collection(activeKey);
+  if (!coll || coll.works.length || isLastColl(coll) || content.collections.length < 2) return;
+  if (!confirm('Supprimer la série « ' + ((coll.fr && coll.fr.title) || coll.key) + ' » ? Elle est vide.')) return;
+
+  content.collections = content.collections.filter(function (c) { return c.key !== activeKey; });
+  activeKey = content.collections[0].key;
+  setDirty(true);
+  renderTabs();
+  renderList();
+}
+
+// ── Bannière du site ──
+var BANNER_MAX_SIDE = 2600;
+
+function openBannerSheet() {
+  var prev = $('bannerPreview');
+  if (content.banner) {
+    prev.src = imgUrl(content.banner);
+    prev.hidden = false;
+    $('bannerDrop').textContent = 'Remplacer la bannière';
+  } else {
+    prev.hidden = true;
+    prev.removeAttribute('src');
+    $('bannerDrop').textContent = 'Choisir une image, ou la déposer ici';
+  }
+  $('bannerHint').textContent = "L'image est automatiquement allégée avant l'envoi.";
+  $('bannerFile').value = '';
+  $('bannerSheet').hidden = false;
+}
+
+function closeBannerSheet() { $('bannerSheet').hidden = true; }
+
+$('bannerClose').addEventListener('click', closeBannerSheet);
+$('bannerSheet').addEventListener('click', function (e) { if (e.target === $('bannerSheet')) closeBannerSheet(); });
+
+$('bannerDrop').addEventListener('click', function () { $('bannerFile').click(); });
+$('bannerDrop').addEventListener('dragover', function (e) { e.preventDefault(); $('bannerDrop').classList.add('over'); });
+$('bannerDrop').addEventListener('dragleave', function () { $('bannerDrop').classList.remove('over'); });
+$('bannerDrop').addEventListener('drop', function (e) {
+  e.preventDefault();
+  $('bannerDrop').classList.remove('over');
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) handleBanner(e.dataTransfer.files[0]);
+});
+$('bannerFile').addEventListener('change', function () {
+  if (this.files && this.files[0]) handleBanner(this.files[0]);
+});
+
+function handleBanner(file) {
+  if (!/^image\//.test(file.type)) { $('bannerHint').textContent = 'Ce fichier n\'est pas une image.'; return; }
+  $('bannerHint').textContent = 'Préparation de l\'image…';
+
+  shrinkTo(file, BANNER_MAX_SIDE)
+    .then(function (blob) {
+      $('bannerHint').textContent = 'Envoi en cours…';
+      return api('/api/upload', {
+        method: 'POST',
+        headers: { 'content-type': blob.type, 'x-filename': file.name },
+        body: blob
+      }).then(function (res) { return { res: res, blob: blob }; });
+    })
+    .then(function (out) {
+      content.banner = out.res.path;
+      var prev = $('bannerPreview');
+      prev.src = URL.createObjectURL(out.blob);
+      prev.hidden = false;
+      $('bannerDrop').textContent = 'Remplacer la bannière';
+      $('bannerHint').textContent =
+        'Bannière prête — ' + Math.round(out.res.bytes / 1024) + ' Ko. Cliquez sur « Enregistrer » pour publier.';
+      setDirty(true);
+    })
+    .catch(function (err) { $('bannerHint').textContent = err.message; });
+}
 </script>
 
 </body>

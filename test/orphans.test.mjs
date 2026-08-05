@@ -62,3 +62,10 @@ test('un contenu vide ne supprime que ce qui est hors délai', () => {
   assert.deepEqual(orphanKeys(vide, [cle(recent, 'x')], NOW), []);
   assert.deepEqual(orphanKeys(vide, [cle(vieux, 'x')], NOW), [cle(vieux, 'x')]);
 });
+
+test('la bannière du site est comptée comme utilisée', () => {
+  const avecBanniere = { banner: `/media/${cle(vieux, 'banniere')}`, collections: [] };
+  assert.ok(usedKeys(avecBanniere).has(cle(vieux, 'banniere')));
+  // Même ancienne, une bannière référencée n'est jamais supprimée.
+  assert.deepEqual(orphanKeys(avecBanniere, [cle(vieux, 'banniere')], NOW), []);
+});
